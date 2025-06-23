@@ -17,7 +17,7 @@ import {
   Stethoscope,
   MapPin
 } from 'lucide-react';
-import AnatomicalDiagram from './AnatomicalDiagram';
+import { AnatomicalDiagram } from './AnatomicalDiagram';
 
 interface Evaluation {
   id: number;
