@@ -289,7 +289,7 @@ const InstructorDetails: React.FC<InstructorDetailsProps> = ({ instructor, onEdi
               
               <div>
                 <label className="block text-sm font-medium text-gray-500 mb-1">Valor por Hora</label>
-                <p className="text-gray-800 font-medium text-green-600">R$ {instructor.hourly Rate.toFixed(2)}</p>
+                <p className="text-gray-800 font-medium text-green-600">R$ {instructor.hourlyRate.toFixed(2)}</p>
               </div>
               
               <div>
