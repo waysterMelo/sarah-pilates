@@ -219,16 +219,9 @@ const ScheduleForm: React.FC<ScheduleFormProps> = ({ schedule, isEdit, onSave, o
       <header className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6 lg:mb-10">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => navigate('/dashboard')}
-            className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
-            aria-label="Voltar ao dashboard"
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
-          </button>
-          <button
             onClick={onCancel}
             className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
-            aria-label="Cancelar"
+            aria-label="Voltar"
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>

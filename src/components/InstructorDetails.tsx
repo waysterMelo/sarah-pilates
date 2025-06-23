@@ -128,12 +128,6 @@ const InstructorDetails: React.FC<InstructorDetailsProps> = ({ instructor, onEdi
       <header className="flex items-center justify-between mb-10">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => navigate('/dashboard')}
-            className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
-          </button>
-          <button
             onClick={onClose}
             className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
           >
@@ -295,7 +289,7 @@ const InstructorDetails: React.FC<InstructorDetailsProps> = ({ instructor, onEdi
               
               <div>
                 <label className="block text-sm font-medium text-gray-500 mb-1">Valor por Hora</label>
-                <p className="text-gray-800 font-medium text-green-600">R$ {instructor.hourlyRate.toFixed(2)}</p>
+                <p className="text-gray-800 font-medium text-green-600">R$ {instructor.hourly Rate.toFixed(2)}</p>
               </div>
               
               <div>
