@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
   Save, 
@@ -38,6 +39,7 @@ interface StudentFormProps {
 }
 
 const StudentForm: React.FC<StudentFormProps> = ({ student, isEdit, onSave, onCancel }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -141,6 +143,12 @@ const StudentForm: React.FC<StudentFormProps> = ({ student, isEdit, onSave, onCa
     <div className="p-10 bg-slate-50 min-h-screen">
       {/* Header */}
       <header className="flex items-center gap-4 mb-10">
+        <button
+          onClick={() => navigate('/dashboard')}
+          className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+        >
+          <ArrowLeft className="w-5 h-5 text-gray-600" />
+        </button>
         <button
           onClick={onCancel}
           className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"

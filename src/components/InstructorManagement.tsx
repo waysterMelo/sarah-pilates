@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Users, 
   Plus, 
@@ -14,7 +15,8 @@ import {
   Clock,
   Star,
   User,
-  BookOpen
+  BookOpen,
+  ArrowLeft
 } from 'lucide-react';
 import InstructorForm from './InstructorForm';
 import InstructorDetails from './InstructorDetails';
@@ -50,6 +52,7 @@ interface Instructor {
 }
 
 const InstructorManagement = () => {
+  const navigate = useNavigate();
   const [instructors, setInstructors] = useState<Instructor[]>([
     {
       id: 1,
@@ -252,12 +255,20 @@ const InstructorManagement = () => {
     <div className="p-10 bg-slate-50 min-h-screen">
       {/* Header */}
       <header className="flex justify-between items-center mb-10">
-        <div>
-          <h1 className="text-4xl font-bold bg-primary-gradient bg-clip-text text-transparent relative">
-            Gestão de Instrutores
-            <div className="absolute -bottom-2 left-0 w-16 h-1 bg-primary-gradient rounded-full"></div>
-          </h1>
-          <p className="text-gray-600 mt-2">Gerencie todos os instrutores do seu estúdio</p>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
+          <div>
+            <h1 className="text-4xl font-bold bg-primary-gradient bg-clip-text text-transparent relative">
+              Gestão de Instrutores
+              <div className="absolute -bottom-2 left-0 w-16 h-1 bg-primary-gradient rounded-full"></div>
+            </h1>
+            <p className="text-gray-600 mt-2">Gerencie todos os instrutores do seu estúdio</p>
+          </div>
         </div>
         <button 
           onClick={handleAddInstructor}

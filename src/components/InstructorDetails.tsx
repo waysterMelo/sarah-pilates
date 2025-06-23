@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
   Edit, 
@@ -60,6 +61,8 @@ interface InstructorDetailsProps {
 }
 
 const InstructorDetails: React.FC<InstructorDetailsProps> = ({ instructor, onEdit, onClose }) => {
+  const navigate = useNavigate();
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Ativo': return 'text-green-600 bg-green-100';
@@ -124,6 +127,12 @@ const InstructorDetails: React.FC<InstructorDetailsProps> = ({ instructor, onEdi
       {/* Header */}
       <header className="flex items-center justify-between mb-10">
         <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
           <button
             onClick={onClose}
             className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
