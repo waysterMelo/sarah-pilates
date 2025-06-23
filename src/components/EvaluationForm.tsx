@@ -56,6 +56,7 @@ interface Evaluation {
     y: number;
     type: 'pain' | 'injury' | 'observation';
     description: string;
+    bodyPart: string;
   }[];
   photos: string[];
   documents: string[];
@@ -63,6 +64,21 @@ interface Evaluation {
   recommendations: string;
   nextEvaluationDate: string;
   createdAt: string;
+  // Novos campos adicionados
+  clinicalDiagnosis: string;
+  responsibleDoctor: string;
+  hasPracticedPilates: string;
+  mainComplaint: string;
+  hma: string;
+  medications: string;
+  associatedPathologies: string;
+  complementaryExams: string;
+  hp: string;
+  physicalFunctionalExam: string;
+  physiotherapeuticDiagnosis: string;
+  treatmentObjective: string;
+  physiotherapeuticInterventions: string;
+  observations: string;
 }
 
 interface EvaluationFormProps {
@@ -110,17 +126,34 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, isEdit, onS
       y: number;
       type: 'pain' | 'injury' | 'observation';
       description: string;
+      bodyPart: string;
     }[],
     photos: [] as string[],
     documents: [] as string[],
     professionalNotes: '',
     recommendations: '',
     nextEvaluationDate: '',
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
+    // Novos campos
+    clinicalDiagnosis: '',
+    responsibleDoctor: '',
+    hasPracticedPilates: '',
+    mainComplaint: '',
+    hma: '',
+    medications: '',
+    associatedPathologies: '',
+    complementaryExams: '',
+    hp: '',
+    physicalFunctionalExam: '',
+    physiotherapeuticDiagnosis: '',
+    treatmentObjective: '',
+    physiotherapeuticInterventions: '',
+    observations: ''
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [currentTab, setCurrentTab] = useState('basic');
+  const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
 
   // Mock data - em um app real, viria de uma API
   const students = [
@@ -158,7 +191,22 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, isEdit, onS
         professionalNotes: evaluation.professionalNotes,
         recommendations: evaluation.recommendations,
         nextEvaluationDate: evaluation.nextEvaluationDate,
-        createdAt: evaluation.createdAt
+        createdAt: evaluation.createdAt,
+        // Novos campos com fallback para valores vazios se não existirem
+        clinicalDiagnosis: (evaluation as any).clinicalDiagnosis || '',
+        responsibleDoctor: (evaluation as any).responsibleDoctor || '',
+        hasPracticedPilates: (evaluation as any).hasPracticedPilates || '',
+        mainComplaint: (evaluation as any).mainComplaint || '',
+        hma: (evaluation as any).hma || '',
+        medications: (evaluation as any).medications || '',
+        associatedPathologies: (evaluation as any).associatedPathologies || '',
+        complementaryExams: (evaluation as any).complementaryExams || '',
+        hp: (evaluation as any).hp || '',
+        physicalFunctionalExam: (evaluation as any).physicalFunctionalExam || '',
+        physiotherapeuticDiagnosis: (evaluation as any).physiotherapeuticDiagnosis || '',
+        treatmentObjective: (evaluation as any).treatmentObjective || '',
+        physiotherapeuticInterventions: (evaluation as any).physiotherapeuticInterventions || '',
+        observations: (evaluation as any).observations || ''
       });
     }
   }, [evaluation, isEdit]);
@@ -247,6 +295,7 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, isEdit, onS
     y: number;
     type: 'pain' | 'injury' | 'observation';
     description: string;
+    bodyPart: string;
   }) => {
     const newMarker = {
       ...marker,
@@ -261,10 +310,12 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, isEdit, onS
 
   const tabs = [
     { id: 'basic', label: 'Dados Básicos', icon: User },
+    { id: 'anamnesis', label: 'Anamnese', icon: FileText },
     { id: 'anthropometrics', label: 'Antropometria', icon: Ruler },
     { id: 'flexibility', label: 'Flexibilidade', icon: Activity },
     { id: 'anatomical', label: 'Avaliação Anatômica', icon: MapPin },
     { id: 'medical', label: 'Histórico Médico', icon: Stethoscope },
+    { id: 'diagnosis', label: 'Diagnóstico', icon: FileText },
     { id: 'notes', label: 'Observações', icon: FileText }
   ];
 
@@ -451,6 +502,162 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, isEdit, onS
                   <option value="Concluída">Concluída</option>
                   <option value="Revisão">Revisão</option>
                 </select>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Anamnese */}
+        {currentTab === 'anamnesis' && (
+          <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-6 lg:p-8 mb-6 lg:mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                <FileText className="w-4 h-4 lg:w-5 lg:h-5 text-purple-600" />
+              </div>
+              <h2 className="text-lg lg:text-xl font-semibold text-gray-800">Anamnese</h2>
+            </div>
+
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="clinicalDiagnosis" className="block text-sm font-medium text-gray-700 mb-2">
+                    Diagnóstico Clínico
+                  </label>
+                  <input
+                    id="clinicalDiagnosis"
+                    type="text"
+                    value={formData.clinicalDiagnosis}
+                    onChange={(e) => handleInputChange('clinicalDiagnosis', e.target.value)}
+                    className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 text-base"
+                    placeholder="Diagnóstico médico"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="responsibleDoctor" className="block text-sm font-medium text-gray-700 mb-2">
+                    Médico Responsável
+                  </label>
+                  <input
+                    id="responsibleDoctor"
+                    type="text"
+                    value={formData.responsibleDoctor}
+                    onChange={(e) => handleInputChange('responsibleDoctor', e.target.value)}
+                    className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 text-base"
+                    placeholder="Nome do médico"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="hasPracticedPilates" className="block text-sm font-medium text-gray-700 mb-2">
+                  Já praticou pilates
+                </label>
+                <textarea
+                  id="hasPracticedPilates"
+                  value={formData.hasPracticedPilates}
+                  onChange={(e) => handleInputChange('hasPracticedPilates', e.target.value)}
+                  rows={2}
+                  className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
+                  placeholder="Experiência anterior com pilates..."
+                />
+              </div>
+
+              <div>
+                <label htmlFor="mainComplaint" className="block text-sm font-medium text-gray-700 mb-2">
+                  Queixa Principal
+                </label>
+                <textarea
+                  id="mainComplaint"
+                  value={formData.mainComplaint}
+                  onChange={(e) => handleInputChange('mainComplaint', e.target.value)}
+                  rows={3}
+                  className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
+                  placeholder="Principal motivo da consulta..."
+                />
+              </div>
+
+              <div>
+                <label htmlFor="hma" className="block text-sm font-medium text-gray-700 mb-2">
+                  HMA (História da Moléstia Atual)
+                </label>
+                <textarea
+                  id="hma"
+                  value={formData.hma}
+                  onChange={(e) => handleInputChange('hma', e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
+                  placeholder="História detalhada da condição atual..."
+                />
+              </div>
+
+              <div>
+                <label htmlFor="medications" className="block text-sm font-medium text-gray-700 mb-2">
+                  Medicamentos em Uso
+                </label>
+                <textarea
+                  id="medications"
+                  value={formData.medications}
+                  onChange={(e) => handleInputChange('medications', e.target.value)}
+                  rows={3}
+                  className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
+                  placeholder="Lista de medicamentos atuais..."
+                />
+              </div>
+
+              <div>
+                <label htmlFor="associatedPathologies" className="block text-sm font-medium text-gray-700 mb-2">
+                  Patologias Associadas
+                </label>
+                <textarea
+                  id="associatedPathologies"
+                  value={formData.associatedPathologies}
+                  onChange={(e) => handleInputChange('associatedPathologies', e.target.value)}
+                  rows={3}
+                  className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
+                  placeholder="Outras condições médicas..."
+                />
+              </div>
+
+              <div>
+                <label htmlFor="complementaryExams" className="block text-sm font-medium text-gray-700 mb-2">
+                  Exames Complementares
+                </label>
+                <textarea
+                  id="complementaryExams"
+                  value={formData.complementaryExams}
+                  onChange={(e) => handleInputChange('complementaryExams', e.target.value)}
+                  rows={3}
+                  className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
+                  placeholder="Exames realizados (raio-x, ressonância, etc.)..."
+                />
+              </div>
+
+              <div>
+                <label htmlFor="hp" className="block text-sm font-medium text-gray-700 mb-2">
+                  HP (História Pregressa)
+                </label>
+                <textarea
+                  id="hp"
+                  value={formData.hp}
+                  onChange={(e) => handleInputChange('hp', e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
+                  placeholder="Histórico médico pregresso..."
+                />
+              </div>
+
+              <div>
+                <label htmlFor="physicalFunctionalExam" className="block text-sm font-medium text-gray-700 mb-2">
+                  Exame Físico-Funcional
+                </label>
+                <textarea
+                  id="physicalFunctionalExam"
+                  value={formData.physicalFunctionalExam}
+                  onChange={(e) => handleInputChange('physicalFunctionalExam', e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
+                  placeholder="Avaliação física e funcional detalhada..."
+                />
               </div>
             </div>
           </div>
@@ -714,6 +921,8 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, isEdit, onS
               markers={formData.anatomicalMarkers}
               onMarkerAdd={handleAnatomicalMarkerAdd}
               onMarkerRemove={handleAnatomicalMarkerRemove}
+              selectedMarker={selectedMarker}
+              setSelectedMarker={setSelectedMarker}
             />
           </div>
         )}
@@ -774,6 +983,62 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, isEdit, onS
           </div>
         )}
 
+        {/* Diagnóstico */}
+        {currentTab === 'diagnosis' && (
+          <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-6 lg:p-8 mb-6 lg:mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-teal-100 rounded-xl flex items-center justify-center">
+                <FileText className="w-4 h-4 lg:w-5 lg:h-5 text-teal-600" />
+              </div>
+              <h2 className="text-lg lg:text-xl font-semibold text-gray-800">Diagnóstico e Tratamento</h2>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <label htmlFor="physiotherapeuticDiagnosis" className="block text-sm font-medium text-gray-700 mb-2">
+                  Diagnóstico Fisioterapêutico
+                </label>
+                <textarea
+                  id="physiotherapeuticDiagnosis"
+                  value={formData.physiotherapeuticDiagnosis}
+                  onChange={(e) => handleInputChange('physiotherapeuticDiagnosis', e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
+                  placeholder="Diagnóstico fisioterapêutico baseado na avaliação..."
+                />
+              </div>
+
+              <div>
+                <label htmlFor="treatmentObjective" className="block text-sm font-medium text-gray-700 mb-2">
+                  Objetivo do Tratamento
+                </label>
+                <textarea
+                  id="treatmentObjective"
+                  value={formData.treatmentObjective}
+                  onChange={(e) => handleInputChange('treatmentObjective', e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
+                  placeholder="Objetivos específicos do tratamento..."
+                />
+              </div>
+
+              <div>
+                <label htmlFor="physiotherapeuticInterventions" className="block text-sm font-medium text-gray-700 mb-2">
+                  Intervenções Fisioterapêuticas
+                </label>
+                <textarea
+                  id="physiotherapeuticInterventions"
+                  value={formData.physiotherapeuticInterventions}
+                  onChange={(e) => handleInputChange('physiotherapeuticInterventions', e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
+                  placeholder="Técnicas e exercícios a serem aplicados..."
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Observações */}
         {currentTab === 'notes' && (
           <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-6 lg:p-8 mb-6 lg:mb-8">
@@ -810,6 +1075,20 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, isEdit, onS
                   rows={4}
                   className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
                   placeholder="Recomendações de exercícios, frequência, cuidados especiais..."
+                />
+              </div>
+
+              <div>
+                <label htmlFor="observations" className="block text-sm font-medium text-gray-700 mb-2">
+                  OBS (Observações Gerais)
+                </label>
+                <textarea
+                  id="observations"
+                  value={formData.observations}
+                  onChange={(e) => handleInputChange('observations', e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
+                  placeholder="Observações gerais sobre o paciente e tratamento..."
                 />
               </div>
 
