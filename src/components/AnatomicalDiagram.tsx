@@ -16,122 +16,112 @@ interface AnatomicalDiagramProps {
   onMarkerRemove: (markerId: string) => void;
 }
 
-// Definição das áreas anatômicas com coordenadas precisas
+// Definição das áreas anatômicas com coordenadas precisas para o boneco original
 const BODY_PARTS = {
   head: {
     name: 'Cabeça',
-    path: 'M200,50 C220,50 240,70 240,90 C240,110 220,130 200,130 C180,130 160,110 160,90 C160,70 180,50 200,50 Z',
-    center: { x: 200, y: 90 }
+    bounds: { x: 180, y: 20, width: 40, height: 50 },
+    center: { x: 200, y: 45 }
   },
   neck: {
     name: 'Pescoço',
-    path: 'M190,130 L210,130 L210,150 L190,150 Z',
-    center: { x: 200, y: 140 }
+    bounds: { x: 190, y: 70, width: 20, height: 20 },
+    center: { x: 200, y: 80 }
   },
   leftShoulder: {
     name: 'Ombro Esquerdo',
-    path: 'M140,150 C130,150 120,160 120,170 C120,180 130,190 140,190 L170,190 L170,150 Z',
-    center: { x: 145, y: 170 }
+    bounds: { x: 140, y: 90, width: 40, height: 30 },
+    center: { x: 160, y: 105 }
   },
   rightShoulder: {
     name: 'Ombro Direito',
-    path: 'M230,150 L260,150 C270,150 280,160 280,170 C280,180 270,190 260,190 L230,190 Z',
-    center: { x: 255, y: 170 }
+    bounds: { x: 220, y: 90, width: 40, height: 30 },
+    center: { x: 240, y: 105 }
   },
   leftArm: {
     name: 'Braço Esquerdo',
-    path: 'M120,190 L140,190 L140,280 L120,280 C110,280 100,270 100,260 L100,210 C100,200 110,190 120,190 Z',
-    center: { x: 120, y: 235 }
+    bounds: { x: 120, y: 120, width: 25, height: 80 },
+    center: { x: 132, y: 160 }
   },
   rightArm: {
     name: 'Braço Direito',
-    path: 'M260,190 L280,190 C290,190 300,200 300,210 L300,260 C300,270 290,280 280,280 L260,280 L260,190 Z',
-    center: { x: 280, y: 235 }
+    bounds: { x: 255, y: 120, width: 25, height: 80 },
+    center: { x: 267, y: 160 }
   },
   leftForearm: {
     name: 'Antebraço Esquerdo',
-    path: 'M100,280 L140,280 L140,370 L100,370 C90,370 80,360 80,350 L80,300 C80,290 90,280 100,280 Z',
-    center: { x: 110, y: 325 }
+    bounds: { x: 110, y: 200, width: 25, height: 80 },
+    center: { x: 122, y: 240 }
   },
   rightForearm: {
     name: 'Antebraço Direito',
-    path: 'M260,280 L300,280 C310,280 320,290 320,300 L320,350 C320,360 310,370 300,370 L260,370 L260,280 Z',
-    center: { x: 290, y: 325 }
+    bounds: { x: 265, y: 200, width: 25, height: 80 },
+    center: { x: 277, y: 240 }
   },
   leftHand: {
     name: 'Mão Esquerda',
-    path: 'M80,370 L140,370 L140,400 C140,410 130,420 120,420 L100,420 C90,420 80,410 80,400 Z',
-    center: { x: 110, y: 395 }
+    bounds: { x: 105, y: 280, width: 20, height: 25 },
+    center: { x: 115, y: 292 }
   },
   rightHand: {
     name: 'Mão Direita',
-    path: 'M260,370 L320,370 L320,400 C320,410 310,420 300,420 L280,420 C270,420 260,410 260,400 Z',
-    center: { x: 290, y: 395 }
+    bounds: { x: 275, y: 280, width: 20, height: 25 },
+    center: { x: 285, y: 292 }
   },
   chest: {
     name: 'Tórax',
-    path: 'M170,150 L230,150 L240,200 L160,200 Z',
-    center: { x: 200, y: 175 }
+    bounds: { x: 170, y: 90, width: 60, height: 60 },
+    center: { x: 200, y: 120 }
   },
   abdomen: {
     name: 'Abdômen',
-    path: 'M160,200 L240,200 L235,280 L165,280 Z',
-    center: { x: 200, y: 240 }
+    bounds: { x: 175, y: 150, width: 50, height: 50 },
+    center: { x: 200, y: 175 }
   },
   pelvis: {
     name: 'Pelve',
-    path: 'M165,280 L235,280 L230,320 L170,320 Z',
-    center: { x: 200, y: 300 }
+    bounds: { x: 175, y: 200, width: 50, height: 40 },
+    center: { x: 200, y: 220 }
   },
   leftThigh: {
     name: 'Coxa Esquerda',
-    path: 'M170,320 L200,320 L195,420 L165,420 C155,420 145,410 145,400 L145,340 C145,330 155,320 165,320 Z',
-    center: { x: 172, y: 370 }
+    bounds: { x: 170, y: 240, width: 25, height: 80 },
+    center: { x: 182, y: 280 }
   },
   rightThigh: {
     name: 'Coxa Direita',
-    path: 'M200,320 L230,320 C240,320 250,330 250,340 L250,400 C250,410 240,420 230,420 L200,420 Z',
-    center: { x: 225, y: 370 }
+    bounds: { x: 205, y: 240, width: 25, height: 80 },
+    center: { x: 217, y: 280 }
   },
   leftKnee: {
     name: 'Joelho Esquerdo',
-    path: 'M165,420 L195,420 L195,450 L165,450 C155,450 145,440 145,430 C145,430 155,420 165,420 Z',
-    center: { x: 170, y: 435 }
+    bounds: { x: 170, y: 320, width: 25, height: 20 },
+    center: { x: 182, y: 330 }
   },
   rightKnee: {
     name: 'Joelho Direito',
-    path: 'M200,420 L230,420 C240,420 250,430 250,430 C250,440 240,450 230,450 L200,450 Z',
-    center: { x: 225, y: 435 }
+    bounds: { x: 205, y: 320, width: 25, height: 20 },
+    center: { x: 217, y: 330 }
   },
   leftCalf: {
     name: 'Panturrilha Esquerda',
-    path: 'M165,450 L195,450 L190,540 L160,540 C150,540 140,530 140,520 L140,470 C140,460 150,450 160,450 Z',
-    center: { x: 167, y: 495 }
+    bounds: { x: 170, y: 340, width: 25, height: 80 },
+    center: { x: 182, y: 380 }
   },
   rightCalf: {
     name: 'Panturrilha Direita',
-    path: 'M200,450 L230,450 C240,450 250,460 250,470 L250,520 C250,530 240,540 230,540 L200,540 Z',
-    center: { x: 225, y: 495 }
+    bounds: { x: 205, y: 340, width: 25, height: 80 },
+    center: { x: 217, y: 380 }
   },
   leftFoot: {
     name: 'Pé Esquerdo',
-    path: 'M140,540 L190,540 L190,570 C190,580 180,590 170,590 L160,590 C150,590 140,580 140,570 Z',
-    center: { x: 165, y: 565 }
+    bounds: { x: 165, y: 420, width: 30, height: 20 },
+    center: { x: 180, y: 430 }
   },
   rightFoot: {
     name: 'Pé Direito',
-    path: 'M200,540 L250,540 L250,570 C250,580 240,590 230,590 L220,590 C210,590 200,580 200,570 Z',
-    center: { x: 225, y: 565 }
-  },
-  upperBack: {
-    name: 'Parte Superior das Costas',
-    path: 'M170,150 L230,150 L240,220 L160,220 Z',
-    center: { x: 200, y: 185 }
-  },
-  lowerBack: {
-    name: 'Parte Inferior das Costas',
-    path: 'M160,220 L240,220 L235,300 L165,300 Z',
-    center: { x: 200, y: 260 }
+    bounds: { x: 205, y: 420, width: 30, height: 20 },
+    center: { x: 220, y: 430 }
   }
 };
 
@@ -149,18 +139,12 @@ const AnatomicalDiagram: React.FC<AnatomicalDiagramProps> = ({
   const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  // Função para detectar se um ponto está dentro de um path SVG
-  const isPointInPath = useCallback((point: { x: number; y: number }, pathData: string): boolean => {
-    if (!svgRef.current) return false;
-    
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', pathData);
-    
-    const svgPoint = svgRef.current.createSVGPoint();
-    svgPoint.x = point.x;
-    svgPoint.y = point.y;
-    
-    return path.isPointInFill(svgPoint);
+  // Função para detectar se um ponto está dentro de uma área retangular
+  const isPointInBounds = useCallback((point: { x: number; y: number }, bounds: { x: number; y: number; width: number; height: number }): boolean => {
+    return point.x >= bounds.x && 
+           point.x <= bounds.x + bounds.width && 
+           point.y >= bounds.y && 
+           point.y <= bounds.y + bounds.height;
   }, []);
 
   // Função para encontrar a parte do corpo clicada
@@ -171,24 +155,24 @@ const AnatomicalDiagram: React.FC<AnatomicalDiagramProps> = ({
       'leftKnee', 'rightKnee', 'leftShoulder', 'rightShoulder',
       'leftForearm', 'rightForearm', 'leftCalf', 'rightCalf',
       'leftArm', 'rightArm', 'leftThigh', 'rightThigh',
-      'chest', 'abdomen', 'pelvis', 'upperBack', 'lowerBack'
+      'chest', 'abdomen', 'pelvis'
     ];
 
     for (const partKey of priorityOrder) {
       const part = BODY_PARTS[partKey as keyof typeof BODY_PARTS];
-      if (part && isPointInPath(point, part.path)) {
+      if (part && isPointInBounds(point, part.bounds)) {
         return partKey;
       }
     }
     return null;
-  }, [isPointInPath]);
+  }, [isPointInBounds]);
 
   const handleSvgClick = useCallback((event: React.MouseEvent<SVGSVGElement>) => {
     if (!svgRef.current) return;
 
     const rect = svgRef.current.getBoundingClientRect();
     const scaleX = 400 / rect.width;
-    const scaleY = 600 / rect.height;
+    const scaleY = 450 / rect.height;
     
     const point = {
       x: (event.clientX - rect.left) * scaleX,
@@ -282,29 +266,32 @@ const AnatomicalDiagram: React.FC<AnatomicalDiagramProps> = ({
             <div className="flex justify-center">
               <svg
                 ref={svgRef}
-                viewBox="0 0 400 600"
+                viewBox="0 0 400 450"
                 className="w-full max-w-md h-auto cursor-crosshair border border-gray-200 rounded-lg"
                 onClick={handleSvgClick}
               >
                 {/* Fundo */}
-                <rect width="400" height="600" fill="#f8fafc" />
+                <rect width="400" height="450" fill="#f8fafc" />
                 
-                {/* Partes do corpo */}
+                {/* Áreas invisíveis para detecção de hover/click */}
                 {Object.entries(BODY_PARTS).map(([partKey, part]) => (
-                  <path
-                    key={partKey}
-                    d={part.path}
+                  <rect
+                    key={`area-${partKey}`}
+                    x={part.bounds.x}
+                    y={part.bounds.y}
+                    width={part.bounds.width}
+                    height={part.bounds.height}
                     fill={
                       selectedBodyPart === partKey
-                        ? '#3b82f6'
+                        ? 'rgba(59, 130, 246, 0.3)'
                         : hoveredBodyPart === partKey
-                        ? '#60a5fa'
-                        : '#e2e8f0'
+                        ? 'rgba(96, 165, 250, 0.2)'
+                        : 'transparent'
                     }
                     stroke={
                       selectedBodyPart === partKey || hoveredBodyPart === partKey
-                        ? '#1d4ed8'
-                        : '#94a3b8'
+                        ? '#3b82f6'
+                        : 'transparent'
                     }
                     strokeWidth="1"
                     className="transition-all duration-200"
@@ -313,13 +300,51 @@ const AnatomicalDiagram: React.FC<AnatomicalDiagramProps> = ({
                   />
                 ))}
 
-                {/* Contorno do corpo */}
-                <path
-                  d="M200,50 C220,50 240,70 240,90 C240,110 220,130 200,130 M190,130 L210,130 L210,150 M170,150 L230,150 M140,150 C130,150 120,160 120,170 C120,180 130,190 140,190 L170,190 M230,190 L260,190 C270,190 280,200 280,210 L280,260 C280,270 270,280 260,280 L260,370 L320,370 L320,400 C320,410 310,420 300,420 L280,420 C270,420 260,410 260,400 L260,370 M140,190 L140,370 L80,370 L80,400 C80,410 90,420 100,420 L120,420 C130,420 140,410 140,400 L140,370 M170,150 L170,320 L200,320 L230,320 L230,150 M200,320 L200,450 M170,320 L170,450 L200,450 L230,450 L230,320 M200,450 L200,540 M170,450 L170,540 L200,540 L230,540 L230,450 M200,540 L200,570 C200,580 210,590 220,590 L230,590 C240,590 250,580 250,570 L250,540 M170,540 L170,570 C170,580 160,590 150,590 L140,590 C130,590 120,580 120,570 L120,540"
-                  fill="none"
-                  stroke="#475569"
-                  strokeWidth="2"
-                />
+                {/* Boneco original - design simples e limpo */}
+                <g stroke="#374151" strokeWidth="2" fill="none">
+                  {/* Cabeça */}
+                  <circle cx="200" cy="45" r="20" fill="#f3f4f6" />
+                  
+                  {/* Pescoço */}
+                  <line x1="200" y1="65" x2="200" y2="90" />
+                  
+                  {/* Tronco */}
+                  <line x1="200" y1="90" x2="200" y2="240" />
+                  
+                  {/* Ombros */}
+                  <line x1="160" y1="105" x2="240" y2="105" />
+                  
+                  {/* Braços */}
+                  <line x1="160" y1="105" x2="132" y2="200" />
+                  <line x1="240" y1="105" x2="267" y2="200" />
+                  
+                  {/* Antebraços */}
+                  <line x1="132" y1="200" x2="122" y2="280" />
+                  <line x1="267" y1="200" x2="277" y2="280" />
+                  
+                  {/* Mãos */}
+                  <circle cx="122" cy="292" r="8" fill="#f3f4f6" />
+                  <circle cx="277" cy="292" r="8" fill="#f3f4f6" />
+                  
+                  {/* Quadril */}
+                  <line x1="182" y1="240" x2="217" y2="240" />
+                  
+                  {/* Coxas */}
+                  <line x1="182" y1="240" x2="182" y2="320" />
+                  <line x1="217" y1="240" x2="217" y2="320" />
+                  
+                  {/* Joelhos */}
+                  <circle cx="182" cy="330" r="5" fill="#f3f4f6" />
+                  <circle cx="217" cy="330" r="5" fill="#f3f4f6" />
+                  
+                  {/* Panturrilhas */}
+                  <line x1="182" y1="340" x2="182" y2="420" />
+                  <line x1="217" y1="340" x2="217" y2="420" />
+                  
+                  {/* Pés */}
+                  <ellipse cx="180" cy="430" rx="15" ry="8" fill="#f3f4f6" />
+                  <ellipse cx="220" cy="430" rx="15" ry="8" fill="#f3f4f6" />
+                </g>
 
                 {/* Marcadores existentes */}
                 {markers.map((marker) => (
