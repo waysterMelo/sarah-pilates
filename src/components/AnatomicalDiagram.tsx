@@ -1,15 +1,5 @@
-import React, { useState } from 'react';
-import { 
-  MapPin, 
-  AlertTriangle, 
-  Eye, 
-  Plus, 
-  X,
-  ZoomIn,
-  ZoomOut,
-  RotateCcw,
-  Target
-} from 'lucide-react';
+import React, { useState, useRef, useCallback } from 'react';
+import { Plus, X, MapPin, AlertTriangle, Eye, Trash2 } from 'lucide-react';
 
 interface AnatomicalMarker {
   id: string;
@@ -17,6 +7,7 @@ interface AnatomicalMarker {
   y: number;
   type: 'pain' | 'injury' | 'observation';
   description: string;
+  bodyPart: string;
 }
 
 interface AnatomicalDiagramProps {
@@ -25,598 +16,593 @@ interface AnatomicalDiagramProps {
   onMarkerRemove: (markerId: string) => void;
 }
 
+// Definição das áreas anatômicas com coordenadas precisas e melhoradas
+const BODY_PARTS = {
+  head: {
+    name: 'Cabeça',
+    bounds: { x: 215, y: 45, width: 70, height: 80 },
+    center: { x: 250, y: 85 }
+  },
+  neck: {
+    name: 'Pescoço',
+    bounds: { x: 235, y: 95, width: 30, height: 25 },
+    center: { x: 250, y: 107 }
+  },
+  leftShoulder: {
+    name: 'Ombro Esquerdo',
+    bounds: { x: 170, y: 115, width: 50, height: 50 },
+    center: { x: 195, y: 140 }
+  },
+  rightShoulder: {
+    name: 'Ombro Direito',
+    bounds: { x: 280, y: 115, width: 50, height: 50 },
+    center: { x: 305, y: 140 }
+  },
+  leftUpperArm: {
+    name: 'Braço Esquerdo Superior',
+    bounds: { x: 162, y: 165, width: 36, height: 85 },
+    center: { x: 180, y: 207 }
+  },
+  rightUpperArm: {
+    name: 'Braço Direito Superior',
+    bounds: { x: 302, y: 165, width: 36, height: 85 },
+    center: { x: 320, y: 207 }
+  },
+  leftElbow: {
+    name: 'Cotovelo Esquerdo',
+    bounds: { x: 168, y: 245, width: 24, height: 24 },
+    center: { x: 180, y: 257 }
+  },
+  rightElbow: {
+    name: 'Cotovelo Direito',
+    bounds: { x: 308, y: 245, width: 24, height: 24 },
+    center: { x: 320, y: 257 }
+  },
+  leftForearm: {
+    name: 'Antebraço Esquerdo',
+    bounds: { x: 160, y: 265, width: 30, height: 90 },
+    center: { x: 175, y: 310 }
+  },
+  rightForearm: {
+    name: 'Antebraço Direito',
+    bounds: { x: 310, y: 265, width: 30, height: 90 },
+    center: { x: 325, y: 310 }
+  },
+  leftWrist: {
+    name: 'Punho Esquerdo',
+    bounds: { x: 167, y: 350, width: 16, height: 16 },
+    center: { x: 175, y: 358 }
+  },
+  rightWrist: {
+    name: 'Punho Direito',
+    bounds: { x: 317, y: 350, width: 16, height: 16 },
+    center: { x: 325, y: 358 }
+  },
+  leftHand: {
+    name: 'Mão Esquerda',
+    bounds: { x: 158, y: 365, width: 24, height: 36 },
+    center: { x: 170, y: 383 }
+  },
+  rightHand: {
+    name: 'Mão Direita',
+    bounds: { x: 318, y: 365, width: 24, height: 36 },
+    center: { x: 330, y: 383 }
+  },
+  upperChest: {
+    name: 'Tórax Superior',
+    bounds: { x: 195, y: 125, width: 110, height: 70 },
+    center: { x: 250, y: 160 }
+  },
+  lowerChest: {
+    name: 'Tórax Inferior',
+    bounds: { x: 205, y: 195, width: 90, height: 55 },
+    center: { x: 250, y: 222 }
+  },
+  upperAbdomen: {
+    name: 'Abdômen Superior',
+    bounds: { x: 210, y: 230, width: 80, height: 40 },
+    center: { x: 250, y: 250 }
+  },
+  lowerAbdomen: {
+    name: 'Abdômen Inferior',
+    bounds: { x: 215, y: 270, width: 70, height: 50 },
+    center: { x: 250, y: 295 }
+  },
+  pelvis: {
+    name: 'Pelve/Quadril',
+    bounds: { x: 205, y: 285, width: 90, height: 70 },
+    center: { x: 250, y: 320 }
+  },
+  leftThigh: {
+    name: 'Coxa Esquerda',
+    bounds: { x: 203, y: 355, width: 44, height: 130 },
+    center: { x: 225, y: 420 }
+  },
+  rightThigh: {
+    name: 'Coxa Direita',
+    bounds: { x: 253, y: 355, width: 44, height: 130 },
+    center: { x: 275, y: 420 }
+  },
+  leftKnee: {
+    name: 'Joelho Esquerdo',
+    bounds: { x: 210, y: 470, width: 30, height: 30 },
+    center: { x: 225, y: 485 }
+  },
+  rightKnee: {
+    name: 'Joelho Direito',
+    bounds: { x: 260, y: 470, width: 30, height: 30 },
+    center: { x: 275, y: 485 }
+  },
+  leftCalf: {
+    name: 'Panturrilha Esquerda',
+    bounds: { x: 208, y: 500, width: 36, height: 90 },
+    center: { x: 226, y: 545 }
+  },
+  rightCalf: {
+    name: 'Panturrilha Direita',
+    bounds: { x: 256, y: 500, width: 36, height: 90 },
+    center: { x: 274, y: 545 }
+  },
+  leftAnkle: {
+    name: 'Tornozelo Esquerdo',
+    bounds: { x: 210, y: 575, width: 20, height: 20 },
+    center: { x: 220, y: 585 }
+  },
+  rightAnkle: {
+    name: 'Tornozelo Direito',
+    bounds: { x: 270, y: 575, width: 20, height: 20 },
+    center: { x: 280, y: 585 }
+  },
+  leftFoot: {
+    name: 'Pé Esquerdo',
+    bounds: { x: 197, y: 583, width: 36, height: 24 },
+    center: { x: 215, y: 595 }
+  },
+  rightFoot: {
+    name: 'Pé Direito',
+    bounds: { x: 267, y: 583, width: 36, height: 24 },
+    center: { x: 285, y: 595 }
+  }
+};
+
 const AnatomicalDiagram: React.FC<AnatomicalDiagramProps> = ({
   markers,
   onMarkerAdd,
   onMarkerRemove
 }) => {
-  const [selectedView, setSelectedView] = useState<'front' | 'back' | 'side'>('front');
-  const [zoom, setZoom] = useState(1);
-  const [isAddingMarker, setIsAddingMarker] = useState(false);
-  const [newMarkerType, setNewMarkerType] = useState<'pain' | 'injury' | 'observation'>('pain');
+  const [selectedBodyPart, setSelectedBodyPart] = useState<string | null>(null);
+  const [hoveredBodyPart, setHoveredBodyPart] = useState<string | null>(null);
   const [showMarkerForm, setShowMarkerForm] = useState(false);
-  const [pendingMarker, setPendingMarker] = useState<{ x: number; y: number } | null>(null);
+  const [markerPosition, setMarkerPosition] = useState<{ x: number; y: number } | null>(null);
+  const [markerType, setMarkerType] = useState<'pain' | 'injury' | 'observation'>('observation');
   const [markerDescription, setMarkerDescription] = useState('');
+  const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
 
-  const handleDiagramClick = (event: React.MouseEvent<SVGElement>) => {
-    if (!isAddingMarker) return;
+  // Função para detectar se um ponto está dentro de uma área retangular
+  const isPointInBounds = useCallback((point: { x: number; y: number }, bounds: { x: number; y: number; width: number; height: number }): boolean => {
+    return point.x >= bounds.x && 
+           point.x <= bounds.x + bounds.width && 
+           point.y >= bounds.y && 
+           point.y <= bounds.y + bounds.height;
+  }, []);
 
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / rect.width) * 100;
-    const y = ((event.clientY - rect.top) / rect.height) * 100;
-
-    setPendingMarker({ x, y });
-    setShowMarkerForm(true);
-  };
-
-  const handleMarkerSave = () => {
-    if (pendingMarker && markerDescription.trim()) {
-      onMarkerAdd({
-        x: pendingMarker.x,
-        y: pendingMarker.y,
-        type: newMarkerType,
-        description: markerDescription.trim()
-      });
+  // Função para encontrar a parte do corpo clicada com priorização melhorada
+  const findBodyPartAtPoint = useCallback((point: { x: number; y: number }): string | null => {
+    // Verificar em ordem de prioridade (partes menores e mais específicas primeiro)
+    const priorityOrder = [
+      // Extremidades pequenas primeiro
+      'leftWrist', 'rightWrist', 'leftAnkle', 'rightAnkle',
+      'leftElbow', 'rightElbow', 'leftKnee', 'rightKnee',
+      'leftHand', 'rightHand', 'leftFoot', 'rightFoot',
+      'head', 'neck',
       
-      setShowMarkerForm(false);
-      setPendingMarker(null);
-      setMarkerDescription('');
-      setIsAddingMarker(false);
-    }
-  };
+      // Membros médios
+      'leftForearm', 'rightForearm', 'leftCalf', 'rightCalf',
+      'leftUpperArm', 'rightUpperArm', 'leftThigh', 'rightThigh',
+      'leftShoulder', 'rightShoulder',
+      
+      // Tronco (áreas maiores por último)
+      'upperChest', 'lowerChest', 'upperAbdomen', 'lowerAbdomen', 'pelvis'
+    ];
 
-  const handleMarkerCancel = () => {
+    for (const partKey of priorityOrder) {
+      const part = BODY_PARTS[partKey as keyof typeof BODY_PARTS];
+      if (part && isPointInBounds(point, part.bounds)) {
+        return partKey;
+      }
+    }
+    return null;
+  }, [isPointInBounds]);
+
+  const handleSvgClick = useCallback((event: React.MouseEvent<SVGSVGElement>) => {
+    if (!svgRef.current) return;
+
+    const rect = svgRef.current.getBoundingClientRect();
+    const scaleX = 500 / rect.width;  // Ajustado para o viewBox 500x600
+    const scaleY = 600 / rect.height;
+    
+    const point = {
+      x: (event.clientX - rect.left) * scaleX,
+      y: (event.clientY - rect.top) * scaleY
+    };
+
+    const bodyPart = findBodyPartAtPoint(point);
+    
+    if (bodyPart) {
+      setSelectedBodyPart(bodyPart);
+      setMarkerPosition(point);
+      setShowMarkerForm(true);
+      setMarkerDescription('');
+    }
+  }, [findBodyPartAtPoint]);
+
+  const handleBodyPartHover = useCallback((partKey: string | null) => {
+    setHoveredBodyPart(partKey);
+  }, []);
+
+  const handleAddMarker = useCallback(() => {
+    if (!markerPosition || !selectedBodyPart || !markerDescription.trim()) return;
+
+    const bodyPart = BODY_PARTS[selectedBodyPart as keyof typeof BODY_PARTS];
+    
+    onMarkerAdd({
+      x: markerPosition.x,
+      y: markerPosition.y,
+      type: markerType,
+      description: markerDescription.trim(),
+      bodyPart: bodyPart?.name || selectedBodyPart
+    });
+
     setShowMarkerForm(false);
-    setPendingMarker(null);
+    setMarkerPosition(null);
+    setSelectedBodyPart(null);
     setMarkerDescription('');
-    setIsAddingMarker(false);
-  };
+  }, [markerPosition, selectedBodyPart, markerType, markerDescription, onMarkerAdd]);
+
+  const handleCancelMarker = useCallback(() => {
+    setShowMarkerForm(false);
+    setMarkerPosition(null);
+    setSelectedBodyPart(null);
+    setMarkerDescription('');
+  }, []);
 
   const getMarkerIcon = (type: string) => {
     switch (type) {
-      case 'pain': return '⚡';
-      case 'injury': return '🩹';
-      case 'observation': return '👁️';
-      default: return '📍';
+      case 'pain': return <AlertTriangle className="w-3 h-3" />;
+      case 'injury': return <X className="w-3 h-3" />;
+      case 'observation': return <Eye className="w-3 h-3" />;
+      default: return <MapPin className="w-3 h-3" />;
     }
   };
 
   const getMarkerColor = (type: string) => {
     switch (type) {
-      case 'pain': return 'bg-red-500 border-red-600 text-white';
-      case 'injury': return 'bg-orange-500 border-orange-600 text-white';
-      case 'observation': return 'bg-blue-500 border-blue-600 text-white';
-      default: return 'bg-gray-500 border-gray-600 text-white';
+      case 'pain': return 'text-red-600 bg-red-100 border-red-300';
+      case 'injury': return 'text-orange-600 bg-orange-100 border-orange-300';
+      case 'observation': return 'text-blue-600 bg-blue-100 border-blue-300';
+      default: return 'text-gray-600 bg-gray-100 border-gray-300';
     }
   };
 
-  // SVG do corpo humano mais realista e detalhado
-  const HumanBodySVG = () => (
-    <svg
-      viewBox="0 0 300 600"
-      className="w-full h-full cursor-crosshair select-none"
-      onClick={handleDiagramClick}
-      style={{ transform: `scale(${zoom})`, transformOrigin: 'center' }}
-    >
-      {/* Definições de gradientes para dar volume */}
-      <defs>
-        <radialGradient id="skinGradient" cx="0.3" cy="0.3" r="0.7">
-          <stop offset="0%" stopColor="#f5deb3" />
-          <stop offset="100%" stopColor="#deb887" />
-        </radialGradient>
-        <linearGradient id="shadowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#d2b48c" />
-          <stop offset="100%" stopColor="#bc9a6a" />
-        </linearGradient>
-      </defs>
-
-      {/* Cabeça mais detalhada */}
-      <g id="head">
-        <ellipse cx="150" cy="60" rx="35" ry="40" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        {/* Rosto */}
-        <ellipse cx="150" cy="65" rx="30" ry="35" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        {/* Olhos */}
-        <circle cx="140" cy="55" r="2" fill="#333"/>
-        <circle cx="160" cy="55" r="2" fill="#333"/>
-        {/* Nariz */}
-        <path d="M 150 60 L 148 65 L 152 65 Z" fill="#d2b48c"/>
-        {/* Boca */}
-        <path d="M 145 70 Q 150 73 155 70" stroke="#d2b48c" strokeWidth="1" fill="none"/>
-      </g>
-
-      {/* Pescoço com músculos */}
-      <g id="neck">
-        <rect x="135" y="95" width="30" height="25" rx="5" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        {/* Músculos do pescoço */}
-        <line x1="140" y1="100" x2="140" y2="115" stroke="#d2b48c" strokeWidth="1"/>
-        <line x1="160" y1="100" x2="160" y2="115" stroke="#d2b48c" strokeWidth="1"/>
-      </g>
-
-      {/* Tronco mais anatômico */}
-      <g id="torso">
-        {/* Tórax */}
-        <ellipse cx="150" cy="180" rx="55" ry="70" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        {/* Músculos peitorais */}
-        <ellipse cx="130" cy="160" rx="20" ry="25" fill="none" stroke="#d2b48c" strokeWidth="1" opacity="0.7"/>
-        <ellipse cx="170" cy="160" rx="20" ry="25" fill="none" stroke="#d2b48c" strokeWidth="1" opacity="0.7"/>
-        {/* Abdômen */}
-        <rect x="125" y="230" width="50" height="60" rx="10" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        {/* Músculos abdominais */}
-        <line x1="140" y1="235" x2="140" y2="285" stroke="#d2b48c" strokeWidth="1"/>
-        <line x1="150" y1="235" x2="150" y2="285" stroke="#d2b48c" strokeWidth="1"/>
-        <line x1="160" y1="235" x2="160" y2="285" stroke="#d2b48c" strokeWidth="1"/>
-        <line x1="130" y1="250" x2="170" y2="250" stroke="#d2b48c" strokeWidth="1"/>
-        <line x1="130" y1="265" x2="170" y2="265" stroke="#d2b48c" strokeWidth="1"/>
-      </g>
-
-      {/* Ombros mais definidos */}
-      <g id="shoulders">
-        <circle cx="95" cy="140" r="25" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <circle cx="205" cy="140" r="25" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-      </g>
-
-      {/* Braços com músculos */}
-      <g id="arms">
-        {/* Braço esquerdo */}
-        <ellipse cx="80" cy="200" rx="18" ry="50" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <line x1="75" y1="170" x2="75" y2="230" stroke="#d2b48c" strokeWidth="1"/>
-        <line x1="85" y1="170" x2="85" y2="230" stroke="#d2b48c" strokeWidth="1"/>
-        
-        {/* Braço direito */}
-        <ellipse cx="220" cy="200" rx="18" ry="50" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <line x1="215" y1="170" x2="215" y2="230" stroke="#d2b48c" strokeWidth="1"/>
-        <line x1="225" y1="170" x2="225" y2="230" stroke="#d2b48c" strokeWidth="1"/>
-      </g>
-
-      {/* Cotovelos */}
-      <g id="elbows">
-        <circle cx="80" cy="250" r="12" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <circle cx="220" cy="250" r="12" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-      </g>
-
-      {/* Antebraços */}
-      <g id="forearms">
-        {/* Antebraço esquerdo */}
-        <ellipse cx="75" cy="310" rx="15" ry="45" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <line x1="70" y1="270" x2="70" y2="350" stroke="#d2b48c" strokeWidth="1"/>
-        
-        {/* Antebraço direito */}
-        <ellipse cx="225" cy="310" rx="15" ry="45" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <line x1="230" y1="270" x2="230" y2="350" stroke="#d2b48c" strokeWidth="1"/>
-      </g>
-
-      {/* Punhos */}
-      <g id="wrists">
-        <circle cx="75" cy="355" r="8" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <circle cx="225" cy="355" r="8" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-      </g>
-
-      {/* Mãos mais detalhadas */}
-      <g id="hands">
-        {/* Mão esquerda */}
-        <ellipse cx="70" cy="380" rx="12" ry="18" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <rect x="65" y="370" width="3" height="12" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        <rect x="68" y="365" width="3" height="15" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        <rect x="71" y="365" width="3" height="15" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        <rect x="74" y="370" width="3" height="12" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        
-        {/* Mão direita */}
-        <ellipse cx="230" cy="380" rx="12" ry="18" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <rect x="225" y="370" width="3" height="12" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        <rect x="228" y="365" width="3" height="15" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        <rect x="231" y="365" width="3" height="15" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        <rect x="234" y="370" width="3" height="12" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-      </g>
-
-      {/* Quadril e pelve */}
-      <g id="pelvis">
-        <ellipse cx="150" cy="320" rx="45" ry="35" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        {/* Ossos do quadril */}
-        <ellipse cx="130" cy="315" rx="15" ry="20" fill="none" stroke="#d2b48c" strokeWidth="1" opacity="0.7"/>
-        <ellipse cx="170" cy="315" rx="15" ry="20" fill="none" stroke="#d2b48c" strokeWidth="1" opacity="0.7"/>
-      </g>
-
-      {/* Coxas com músculos */}
-      <g id="thighs">
-        {/* Coxa esquerda */}
-        <ellipse cx="125" cy="420" rx="22" ry="65" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <line x1="115" y1="370" x2="115" y2="470" stroke="#d2b48c" strokeWidth="1"/>
-        <line x1="135" y1="370" x2="135" y2="470" stroke="#d2b48c" strokeWidth="1"/>
-        
-        {/* Coxa direita */}
-        <ellipse cx="175" cy="420" rx="22" ry="65" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <line x1="165" y1="370" x2="165" y2="470" stroke="#d2b48c" strokeWidth="1"/>
-        <line x1="185" y1="370" x2="185" y2="470" stroke="#d2b48c" strokeWidth="1"/>
-      </g>
-
-      {/* Joelhos */}
-      <g id="knees">
-        <circle cx="125" cy="485" r="15" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <circle cx="175" cy="485" r="15" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        {/* Patela */}
-        <ellipse cx="125" cy="485" rx="8" ry="10" fill="none" stroke="#d2b48c" strokeWidth="1"/>
-        <ellipse cx="175" cy="485" rx="8" ry="10" fill="none" stroke="#d2b48c" strokeWidth="1"/>
-      </g>
-
-      {/* Pernas com músculos */}
-      <g id="legs">
-        {/* Perna esquerda */}
-        <ellipse cx="120" cy="540" rx="18" ry="45" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <line x1="110" y1="505" x2="110" y2="575" stroke="#d2b48c" strokeWidth="1"/>
-        <line x1="130" y1="505" x2="130" y2="575" stroke="#d2b48c" strokeWidth="1"/>
-        
-        {/* Perna direita */}
-        <ellipse cx="180" cy="540" rx="18" ry="45" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <line x1="170" y1="505" x2="170" y2="575" stroke="#d2b48c" strokeWidth="1"/>
-        <line x1="190" y1="505" x2="190" y2="575" stroke="#d2b48c" strokeWidth="1"/>
-      </g>
-
-      {/* Tornozelos */}
-      <g id="ankles">
-        <circle cx="120" cy="585" r="10" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <circle cx="180" cy="585" r="10" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-      </g>
-
-      {/* Pés mais detalhados */}
-      <g id="feet">
-        {/* Pé esquerdo */}
-        <ellipse cx="115" cy="595" rx="18" ry="12" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <rect x="110" y="590" width="3" height="8" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        <rect x="113" y="588" width="3" height="10" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        <rect x="116" y="588" width="3" height="10" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        <rect x="119" y="590" width="3" height="8" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        <rect x="122" y="592" width="3" height="6" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        
-        {/* Pé direito */}
-        <ellipse cx="185" cy="595" rx="18" ry="12" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="2"/>
-        <rect x="180" y="590" width="3" height="8" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        <rect x="183" y="588" width="3" height="10" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        <rect x="186" y="588" width="3" height="10" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        <rect x="189" y="590" width="3" height="8" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-        <rect x="192" y="592" width="3" height="6" rx="1" fill="url(#skinGradient)" stroke="#d2b48c" strokeWidth="1"/>
-      </g>
-
-      {/* Marcadores existentes */}
-      {markers.map((marker) => (
-        <g key={marker.id}>
-          <circle
-            cx={(marker.x / 100) * 300}
-            cy={(marker.y / 100) * 600}
-            r="12"
-            className={`${getMarkerColor(marker.type)} cursor-pointer shadow-lg`}
-            onClick={(e) => {
-              e.stopPropagation();
-              onMarkerRemove(marker.id);
-            }}
-            style={{ filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))' }}
-          />
-          <text
-            x={(marker.x / 100) * 300}
-            y={(marker.y / 100) * 600 + 5}
-            textAnchor="middle"
-            className="text-sm font-bold text-white pointer-events-none"
-            style={{ fontSize: '14px' }}
-          >
-            {getMarkerIcon(marker.type)}
-          </text>
-        </g>
-      ))}
-      
-      {/* Marcador pendente */}
-      {pendingMarker && (
-        <g>
-          <circle
-            cx={(pendingMarker.x / 100) * 300}
-            cy={(pendingMarker.y / 100) * 600}
-            r="12"
-            className={`${getMarkerColor(newMarkerType)} opacity-70 animate-pulse`}
-            style={{ filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))' }}
-          />
-          <text
-            x={(pendingMarker.x / 100) * 300}
-            y={(pendingMarker.y / 100) * 600 + 5}
-            textAnchor="middle"
-            className="text-sm font-bold text-white pointer-events-none"
-            style={{ fontSize: '14px' }}
-          >
-            {getMarkerIcon(newMarkerType)}
-          </text>
-        </g>
-      )}
-
-      {/* Pontos de referência anatômica */}
-      <g id="anatomical-points" opacity="0.3">
-        {/* Pontos principais para referência */}
-        <circle cx="150" cy="60" r="2" fill="#666" /> {/* Cabeça */}
-        <circle cx="150" cy="110" r="2" fill="#666" /> {/* Pescoço */}
-        <circle cx="95" cy="140" r="2" fill="#666" />  {/* Ombro esquerdo */}
-        <circle cx="205" cy="140" r="2" fill="#666" /> {/* Ombro direito */}
-        <circle cx="150" cy="180" r="2" fill="#666" /> {/* Centro do peito */}
-        <circle cx="150" cy="250" r="2" fill="#666" /> {/* Abdômen */}
-        <circle cx="150" cy="320" r="2" fill="#666" /> {/* Quadril */}
-        <circle cx="125" cy="485" r="2" fill="#666" /> {/* Joelho esquerdo */}
-        <circle cx="175" cy="485" r="2" fill="#666" /> {/* Joelho direito */}
-        <circle cx="120" cy="585" r="2" fill="#666" /> {/* Tornozelo esquerdo */}
-        <circle cx="180" cy="585" r="2" fill="#666" /> {/* Tornozelo direito */}
-      </g>
-    </svg>
-  );
-
   return (
     <div className="space-y-6">
-      {/* Controles */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setSelectedView('front')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              selectedView === 'front'
-                ? 'bg-primary-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Vista Frontal
-          </button>
-          <button
-            onClick={() => setSelectedView('back')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              selectedView === 'back'
-                ? 'bg-primary-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Vista Posterior
-          </button>
-          <button
-            onClick={() => setSelectedView('side')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              selectedView === 'side'
-                ? 'bg-primary-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Vista Lateral
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
-            className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
-            title="Diminuir zoom"
-          >
-            <ZoomOut className="w-4 h-4" />
-          </button>
-          <span className="text-sm text-gray-600 min-w-[60px] text-center">
-            {Math.round(zoom * 100)}%
-          </span>
-          <button
-            onClick={() => setZoom(Math.min(2, zoom + 0.1))}
-            className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
-            title="Aumentar zoom"
-          >
-            <ZoomIn className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setZoom(1)}
-            className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
-            title="Resetar zoom"
-          >
-            <RotateCcw className="w-4 h-4" />
-          </button>
-        </div>
+      {/* Instruções */}
+      <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
+        <h4 className="font-medium text-blue-800 mb-2">Como usar:</h4>
+        <ul className="text-sm text-blue-700 space-y-1">
+          <li>• Clique em qualquer parte do corpo para adicionar uma marcação</li>
+          <li>• Passe o mouse sobre as áreas para ver o nome da parte anatômica</li>
+          <li>• Escolha o tipo de marcação: dor, lesão ou observação</li>
+          <li>• Adicione uma descrição detalhada para cada marcação</li>
+        </ul>
       </div>
 
-      {/* Ferramentas de Marcação */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-200">
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          <div className="flex flex-wrap gap-3">
-            <button
-              onClick={() => {
-                setNewMarkerType('pain');
-                setIsAddingMarker(!isAddingMarker);
-              }}
-              className={`px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-2 transition-all duration-300 min-h-[44px] ${
-                isAddingMarker && newMarkerType === 'pain'
-                  ? 'bg-red-500 text-white shadow-lg transform scale-105'
-                  : 'bg-white text-red-600 border-2 border-red-200 hover:bg-red-50 hover:border-red-300'
-              }`}
-            >
-              <span className="text-lg">⚡</span>
-              Marcar Dor
-            </button>
-            <button
-              onClick={() => {
-                setNewMarkerType('injury');
-                setIsAddingMarker(!isAddingMarker);
-              }}
-              className={`px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-2 transition-all duration-300 min-h-[44px] ${
-                isAddingMarker && newMarkerType === 'injury'
-                  ? 'bg-orange-500 text-white shadow-lg transform scale-105'
-                  : 'bg-white text-orange-600 border-2 border-orange-200 hover:bg-orange-50 hover:border-orange-300'
-              }`}
-            >
-              <span className="text-lg">🩹</span>
-              Marcar Lesão
-            </button>
-            <button
-              onClick={() => {
-                setNewMarkerType('observation');
-                setIsAddingMarker(!isAddingMarker);
-              }}
-              className={`px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-2 transition-all duration-300 min-h-[44px] ${
-                isAddingMarker && newMarkerType === 'observation'
-                  ? 'bg-blue-500 text-white shadow-lg transform scale-105'
-                  : 'bg-white text-blue-600 border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-300'
-              }`}
-            >
-              <span className="text-lg">👁️</span>
-              Observação
-            </button>
-          </div>
+      {/* Diagrama Anatômico */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex-1">
+          <div className="bg-white p-6 rounded-xl border border-gray-200 relative">
+            <h4 className="font-medium text-gray-800 mb-4 text-center">
+              Modelo Anatômico Interativo
+              {hoveredBodyPart && (
+                <span className="block text-sm text-blue-600 mt-1">
+                  {BODY_PARTS[hoveredBodyPart as keyof typeof BODY_PARTS]?.name}
+                </span>
+              )}
+            </h4>
+            
+            <div className="flex justify-center">
+              <svg
+                ref={svgRef}
+                viewBox="0 0 500 600"
+                className="w-full max-w-md h-auto cursor-crosshair border border-gray-200 rounded-lg"
+                onClick={handleSvgClick}
+              >
+                {/* Fundo */}
+                <rect width="500" height="600" fill="#f8fafc" />
+                
+                {/* Áreas invisíveis para detecção de hover/click com melhor precisão */}
+                {Object.entries(BODY_PARTS).map(([partKey, part]) => (
+                  <rect
+                    key={`area-${partKey}`}
+                    x={part.bounds.x}
+                    y={part.bounds.y}
+                    width={part.bounds.width}
+                    height={part.bounds.height}
+                    fill={
+                      selectedBodyPart === partKey
+                        ? 'rgba(59, 130, 246, 0.3)'
+                        : hoveredBodyPart === partKey
+                        ? 'rgba(96, 165, 250, 0.2)'
+                        : 'transparent'
+                    }
+                    stroke={
+                      selectedBodyPart === partKey || hoveredBodyPart === partKey
+                        ? '#3b82f6'
+                        : 'transparent'
+                    }
+                    strokeWidth="2"
+                    className="transition-all duration-200"
+                    onMouseEnter={() => handleBodyPartHover(partKey)}
+                    onMouseLeave={() => handleBodyPartHover(null)}
+                  />
+                ))}
 
-          {isAddingMarker && (
-            <div className="flex items-center gap-2 text-sm text-gray-700 bg-white px-4 py-2 rounded-lg border-2 border-dashed border-gray-300">
-              <Target className="w-4 h-4 text-primary-500" />
-              <span className="font-medium">Clique no diagrama para adicionar marcador</span>
+                {/* Boneco original mantido exatamente como estava */}
+                <g stroke="#374151" strokeWidth="2" fill="none">
+                  {/* Cabeça */}
+                  <circle cx="250" cy="85" r="35" fill="#f3f4f6" />
+                  
+                  {/* Pescoço */}
+                  <line x1="250" y1="120" x2="250" y2="140" />
+                  
+                  {/* Tronco */}
+                  <line x1="250" y1="140" x2="250" y2="355" />
+                  
+                  {/* Ombros */}
+                  <line x1="195" y1="140" x2="305" y2="140" />
+                  
+                  {/* Braços */}
+                  <line x1="195" y1="140" x2="180" y2="250" />
+                  <line x1="305" y1="140" x2="320" y2="250" />
+                  
+                  {/* Antebraços */}
+                  <line x1="180" y1="250" x2="175" y2="355" />
+                  <line x1="320" y1="250" x2="325" y2="355" />
+                  
+                  {/* Mãos */}
+                  <circle cx="175" cy="383" r="12" fill="#f3f4f6" />
+                  <circle cx="325" cy="383" r="12" fill="#f3f4f6" />
+                  
+                  {/* Quadril */}
+                  <line x1="225" y1="355" x2="275" y2="355" />
+                  
+                  {/* Coxas */}
+                  <line x1="225" y1="355" x2="225" y2="485" />
+                  <line x1="275" y1="355" x2="275" y2="485" />
+                  
+                  {/* Joelhos */}
+                  <circle cx="225" cy="485" r="8" fill="#f3f4f6" />
+                  <circle cx="275" cy="485" r="8" fill="#f3f4f6" />
+                  
+                  {/* Panturrilhas */}
+                  <line x1="225" y1="500" x2="225" y2="585" />
+                  <line x1="275" y1="500" x2="275" y2="585" />
+                  
+                  {/* Pés */}
+                  <ellipse cx="215" cy="595" rx="18" ry="12" fill="#f3f4f6" />
+                  <ellipse cx="285" cy="595" rx="18" ry="12" fill="#f3f4f6" />
+                </g>
+
+                {/* Marcadores existentes */}
+                {markers.map((marker) => (
+                  <g key={marker.id}>
+                    <circle
+                      cx={marker.x}
+                      cy={marker.y}
+                      r="8"
+                      className={`${getMarkerColor(marker.type)} cursor-pointer transition-all duration-200 hover:scale-110`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedMarker(selectedMarker === marker.id ? null : marker.id);
+                      }}
+                    />
+                    <foreignObject
+                      x={marker.x - 6}
+                      y={marker.y - 6}
+                      width="12"
+                      height="12"
+                      className="pointer-events-none"
+                    >
+                      <div className="flex items-center justify-center w-full h-full">
+                        {getMarkerIcon(marker.type)}
+                      </div>
+                    </foreignObject>
+                  </g>
+                ))}
+
+                {/* Marcador temporário */}
+                {markerPosition && (
+                  <circle
+                    cx={markerPosition.x}
+                    cy={markerPosition.y}
+                    r="8"
+                    className="fill-yellow-200 stroke-yellow-500 stroke-2 animate-pulse"
+                  />
+                )}
+              </svg>
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* Diagrama Principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200 rounded-xl p-6 overflow-hidden shadow-inner">
-            <div className="w-full h-[500px] flex items-center justify-center bg-white rounded-lg shadow-sm">
-              <HumanBodySVG />
-            </div>
           </div>
         </div>
 
-        {/* Lista de Marcadores */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-800">Marcadores</h3>
-            <span className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm font-medium">
-              {markers.length}
-            </span>
-          </div>
-          
-          {markers.length === 0 ? (
-            <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-xl">
-              <MapPin className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-              <p className="text-sm font-medium">Nenhum marcador adicionado</p>
-              <p className="text-xs text-gray-400 mt-1">
-                Use as ferramentas acima para marcar pontos no diagrama
+        {/* Painel lateral */}
+        <div className="w-full lg:w-80 space-y-4">
+          {/* Lista de marcadores */}
+          <div className="bg-white p-4 rounded-xl border border-gray-200">
+            <h4 className="font-medium text-gray-800 mb-3">
+              Marcações ({markers.length})
+            </h4>
+            
+            {markers.length === 0 ? (
+              <p className="text-sm text-gray-500 italic">
+                Nenhuma marcação adicionada
               </p>
-            </div>
-          ) : (
-            <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
-              {markers.map((marker, index) => (
-                <div
-                  key={marker.id}
-                  className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all duration-300 hover:border-gray-300"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${getMarkerColor(marker.type)} shadow-sm`}>
+            ) : (
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {markers.map((marker) => (
+                  <div
+                    key={marker.id}
+                    className={`p-3 rounded-lg border transition-all duration-200 cursor-pointer ${
+                      selectedMarker === marker.id
+                        ? 'border-blue-300 bg-blue-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                    onClick={() => setSelectedMarker(selectedMarker === marker.id ? null : marker.id)}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2 flex-1">
+                        <span className={`p-1 rounded-full ${getMarkerColor(marker.type)}`}>
                           {getMarkerIcon(marker.type)}
                         </span>
-                        <div>
-                          <span className="text-sm font-semibold text-gray-800 capitalize">
-                            {marker.type === 'pain' ? 'Dor' : marker.type === 'injury' ? 'Lesão' : 'Observação'} #{index + 1}
-                          </span>
-                          <p className="text-xs text-gray-500">
-                            Posição: {marker.x.toFixed(1)}%, {marker.y.toFixed(1)}%
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-800 truncate">
+                            {marker.bodyPart}
+                          </p>
+                          <p className="text-xs text-gray-600 line-clamp-2">
+                            {marker.description}
                           </p>
                         </div>
                       </div>
-                      <p className="text-sm text-gray-600 leading-relaxed">{marker.description}</p>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onMarkerRemove(marker.id);
+                        }}
+                        className="p-1 text-red-500 hover:bg-red-100 rounded transition-colors"
+                        title="Remover marcação"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
                     </div>
-                    <button
-                      onClick={() => onMarkerRemove(marker.id)}
-                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
-                      title="Remover marcador"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Legenda */}
+          <div className="bg-white p-4 rounded-xl border border-gray-200">
+            <h4 className="font-medium text-gray-800 mb-3">Legenda</h4>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="p-1 rounded-full text-red-600 bg-red-100 border border-red-300">
+                  <AlertTriangle className="w-3 h-3" />
+                </span>
+                <span className="text-sm text-gray-700">Dor</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="p-1 rounded-full text-orange-600 bg-orange-100 border border-orange-300">
+                  <X className="w-3 h-3" />
+                </span>
+                <span className="text-sm text-gray-700">Lesão</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="p-1 rounded-full text-blue-600 bg-blue-100 border border-blue-300">
+                  <Eye className="w-3 h-3" />
+                </span>
+                <span className="text-sm text-gray-700">Observação</span>
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
 
-      {/* Modal de Adição de Marcador */}
+      {/* Modal para adicionar marcador */}
       {showMarkerForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl">
-            <div className="flex items-center gap-3 mb-4">
-              <span className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold ${getMarkerColor(newMarkerType)}`}>
-                {getMarkerIcon(newMarkerType)}
-              </span>
-              <h3 className="text-lg font-semibold text-gray-800">
-                Adicionar {newMarkerType === 'pain' ? 'Dor' : newMarkerType === 'injury' ? 'Lesão' : 'Observação'}
-              </h3>
-            </div>
+          <div className="bg-white rounded-xl p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Adicionar Marcação
+            </h3>
             
+            {selectedBodyPart && (
+              <p className="text-sm text-gray-600 mb-4">
+                Parte selecionada: <strong>
+                  {BODY_PARTS[selectedBodyPart as keyof typeof BODY_PARTS]?.name}
+                </strong>
+              </p>
+            )}
+
             <div className="space-y-4">
               <div>
-                <label htmlFor="markerDescription" className="block text-sm font-medium text-gray-700 mb-2">
-                  Descrição detalhada *
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tipo de Marcação
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { value: 'pain', label: 'Dor', icon: AlertTriangle, color: 'red' },
+                    { value: 'injury', label: 'Lesão', icon: X, color: 'orange' },
+                    { value: 'observation', label: 'Observação', icon: Eye, color: 'blue' }
+                  ].map((type) => {
+                    const Icon = type.icon;
+                    return (
+                      <button
+                        key={type.value}
+                        type="button"
+                        onClick={() => setMarkerType(type.value as any)}
+                        className={`p-3 rounded-lg border-2 transition-all duration-200 ${
+                          markerType === type.value
+                            ? `border-${type.color}-500 bg-${type.color}-50`
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <Icon className={`w-4 h-4 mx-auto mb-1 ${
+                          markerType === type.value ? `text-${type.color}-600` : 'text-gray-400'
+                        }`} />
+                        <span className={`text-xs ${
+                          markerType === type.value ? `text-${type.color}-700` : 'text-gray-600'
+                        }`}>
+                          {type.label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                  Descrição *
                 </label>
                 <textarea
-                  id="markerDescription"
+                  id="description"
                   value={markerDescription}
                   onChange={(e) => setMarkerDescription(e.target.value)}
-                  rows={4}
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-200 resize-none text-sm"
-                  placeholder={`Descreva a ${newMarkerType === 'pain' ? 'dor ou desconforto' : newMarkerType === 'injury' ? 'lesão ou trauma' : 'observação'} em detalhes...`}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 resize-none"
+                  placeholder="Descreva a observação, sintoma ou condição..."
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Seja específico sobre intensidade, frequência e características
-                </p>
               </div>
-              
-              <div className="flex gap-3">
-                <button
-                  onClick={handleMarkerCancel}
-                  className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleMarkerSave}
-                  disabled={!markerDescription.trim()}
-                  className="flex-1 px-4 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-                >
-                  Adicionar
-                </button>
-              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                onClick={handleCancelMarker}
+                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleAddMarker}
+                disabled={!markerDescription.trim()}
+                className="px-4 py-2 bg-primary-gradient text-white rounded-lg hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Adicionar
+              </button>
             </div>
           </div>
         </div>
       )}
-
-      {/* Legenda Melhorada */}
-      <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-6 border border-gray-200">
-        <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <Eye className="w-5 h-5" />
-          Legenda dos Marcadores
-        </h4>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-red-200">
-            <span className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-sm text-white font-bold">⚡</span>
-            <div>
-              <p className="font-medium text-red-700">Dor / Desconforto</p>
-              <p className="text-xs text-red-600">Sensações dolorosas ou incômodas</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-orange-200">
-            <span className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-sm text-white font-bold">🩹</span>
-            <div>
-              <p className="font-medium text-orange-700">Lesão / Trauma</p>
-              <p className="text-xs text-orange-600">Ferimentos ou traumas físicos</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-blue-200">
-            <span className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm text-white font-bold">👁️</span>
-            <div>
-              <p className="font-medium text-blue-700">Observação Geral</p>
-              <p className="text-xs text-blue-600">Pontos de atenção ou observação</p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-          <p className="text-sm text-blue-800">
-            <strong>Dica:</strong> Clique nos marcadores para removê-los. Use o zoom para maior precisão na marcação.
-          </p>
-        </div>
-      </div>
     </div>
   );
 };
