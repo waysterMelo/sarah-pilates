@@ -7,7 +7,8 @@ import {
   Calendar, 
   FileText,
   Settings,
-  LogOut 
+  LogOut,
+  GraduationCap
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -17,6 +18,7 @@ const Sidebar = () => {
   const navItems = [
     { icon: PieChart, label: 'Dashboard', path: '/dashboard' },
     { icon: Users, label: 'Alunos', path: '/students' },
+    { icon: GraduationCap, label: 'Instrutores', path: '/instructors' },
     { icon: Calendar, label: 'Agenda', path: '/schedule' },
     { icon: FileText, label: 'Fichas', path: '/records' },
     { icon: Settings, label: 'Configurações', path: '/settings' },
