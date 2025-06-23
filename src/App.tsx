@@ -6,6 +6,7 @@ import StudentManagement from './components/StudentManagement';
 import InstructorManagement from './components/InstructorManagement';
 import ScheduleManagement from './components/ScheduleManagement';
 import ScheduleCapacity from './components/ScheduleCapacity';
+import EvaluationManagement from './components/EvaluationManagement';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/instructors" element={<InstructorManagement />} />
           <Route path="/schedule" element={<ScheduleManagement />} />
           <Route path="/schedule-capacity" element={<ScheduleCapacity />} />
+          <Route path="/evaluations" element={<EvaluationManagement />} />
           <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>

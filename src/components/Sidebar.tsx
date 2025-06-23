@@ -8,7 +8,8 @@ import {
   FileText,
   Settings,
   LogOut,
-  GraduationCap
+  GraduationCap,
+  ClipboardList
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -20,6 +21,7 @@ const Sidebar = () => {
     { icon: Users, label: 'Alunos', path: '/students' },
     { icon: GraduationCap, label: 'Instrutores', path: '/instructors' },
     { icon: Calendar, label: 'Agenda', path: '/schedule' },
+    { icon: ClipboardList, label: 'Avaliações', path: '/evaluations' },
     { icon: FileText, label: 'Fichas', path: '/records' },
     { icon: Settings, label: 'Configurações', path: '/settings' },
   ];
