@@ -7,6 +7,7 @@ import InstructorManagement from './components/InstructorManagement';
 import ScheduleManagement from './components/ScheduleManagement';
 import ScheduleCapacity from './components/ScheduleCapacity';
 import EvaluationManagement from './components/EvaluationManagement';
+import EvolutionRecords from './components/EvolutionRecords';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/schedule" element={<ScheduleManagement />} />
           <Route path="/schedule-capacity" element={<ScheduleCapacity />} />
           <Route path="/evaluations" element={<EvaluationManagement />} />
+          <Route path="/records" element={<EvolutionRecords />} />
           <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>
