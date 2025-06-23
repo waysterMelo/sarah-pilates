@@ -20,7 +20,7 @@ import {
   Eye,
   Share2
 } from 'lucide-react';
-import { AnatomicalDiagram } from './AnatomicalDiagram';
+import AnatomicalDiagram from './AnatomicalDiagram';
 
 interface Evaluation {
   id: number;
