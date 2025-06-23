@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
+// Certifique-se de ter 'lucide-react' instalado em seu projeto: npm install lucide-react
 import { Plus, X, MapPin, AlertTriangle, Eye, Trash2 } from 'lucide-react';
 
 // INTERFACES
@@ -504,4 +505,58 @@ const AnatomicalDiagram: React.FC<AnatomicalDiagramProps> = ({
   );
 };
 
-export default AnatomicalDiagram;
+
+// COMPONENTE PRINCIPAL DA APLICAÇÃO
+export default function App() {
+  const [markers, setMarkers] = useState<AnatomicalMarker[]>([]);
+
+  const handleAddMarker = (markerToAdd: Omit<AnatomicalMarker, 'id'>) => {
+    const newMarker: AnatomicalMarker = {
+      ...markerToAdd,
+      id: new Date().toISOString() + Math.random(), // ID único
+    };
+    setMarkers(prevMarkers => [...prevMarkers, newMarker]);
+  };
+
+  const handleRemoveMarker = (markerId: string) => {
+    setMarkers(prevMarkers => prevMarkers.filter(marker => marker.id !== markerId));
+  };
+  
+  // Adiciona alguns marcadores iniciais para demonstração
+  React.useEffect(() => {
+     setMarkers([
+       {
+         id: '1',
+         x: 222, y: 540,
+         type: 'pain',
+         description: 'Dor aguda no joelho esquerdo ao subir escadas.',
+         bodyPart: 'Joelho Esquerdo'
+       },
+       {
+         id: '2',
+         x: 308, y: 162,
+         type: 'injury',
+         description: 'Lesão antiga no manguito rotador direito.',
+         bodyPart: 'Ombro Direito'
+       }
+     ]);
+  }, []);
+
+  return (
+    <div className="bg-gray-50 min-h-screen p-4 sm:p-6 lg:p-8 font-sans">
+      <div className="max-w-7xl mx-auto">
+        <header className="mb-6">
+            <h1 className="text-3xl font-bold text-gray-800">Ficha de Avaliação Fisioterapêutica</h1>
+            <p className="text-gray-600 mt-1">Utilize o diagrama abaixo para marcar pontos de dor, lesões ou outras observações.</p>
+        </header>
+        <main>
+          <AnatomicalDiagram
+            markers={markers}
+            onMarkerAdd={handleAddMarker}
+            onMarkerRemove={handleRemoveMarker}
+          />
+        </main>
+      </div>
+    </div>
+  );
+}
