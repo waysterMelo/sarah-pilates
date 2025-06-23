@@ -140,59 +140,65 @@ const StudentForm: React.FC<StudentFormProps> = ({ student, isEdit, onSave, onCa
   ];
 
   return (
-    <div className="p-10 bg-slate-50 min-h-screen">
+    <div className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
       {/* Header */}
-      <header className="flex items-center gap-4 mb-10">
-        <button
-          onClick={() => navigate('/dashboard')}
-          className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-        >
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
-        </button>
-        <button
-          onClick={onCancel}
-          className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-        >
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
-        </button>
-        <div>
-          <h1 className="text-4xl font-bold bg-primary-gradient bg-clip-text text-transparent relative">
+      <header className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6 lg:mb-10">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            aria-label="Voltar ao dashboard"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
+          <button
+            onClick={onCancel}
+            className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            aria-label="Cancelar"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
+        </div>
+        <div className="flex-1">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-primary-gradient bg-clip-text text-transparent relative">
             {isEdit ? 'Editar Aluno' : 'Novo Aluno'}
-            <div className="absolute -bottom-2 left-0 w-16 h-1 bg-primary-gradient rounded-full"></div>
+            <div className="absolute -bottom-1 lg:-bottom-2 left-0 w-12 lg:w-16 h-0.5 lg:h-1 bg-primary-gradient rounded-full"></div>
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-sm sm:text-base text-gray-600 mt-2">
             {isEdit ? 'Atualize as informações do aluno' : 'Preencha os dados do novo aluno'}
           </p>
         </div>
       </header>
 
-      <form onSubmit={handleSubmit} className="max-w-4xl">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <form onSubmit={handleSubmit} className="max-w-none lg:max-w-6xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           {/* Dados Pessoais */}
-          <div className="bg-white rounded-3xl shadow-3d p-8">
+          <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-6 lg:p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                <User className="w-5 h-5 text-blue-600" />
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                <User className="w-4 h-4 lg:w-5 lg:h-5 text-blue-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-800">Dados Pessoais</h2>
+              <h2 className="text-lg lg:text-xl font-semibold text-gray-800">Dados Pessoais</h2>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4 lg:space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                   Nome Completo *
                 </label>
                 <input
+                  id="name"
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 ${
+                  className={`w-full px-4 py-3 lg:py-4 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 text-base ${
                     errors.name ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-primary-500'
                   }`}
                   placeholder="Digite o nome completo"
+                  aria-describedby={errors.name ? "name-error" : undefined}
                 />
                 {errors.name && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p id="name-error" className="mt-2 text-sm text-red-600 flex items-center gap-1">
                     <AlertCircle className="w-4 h-4" />
                     {errors.name}
                   </p>
@@ -200,23 +206,25 @@ const StudentForm: React.FC<StudentFormProps> = ({ student, isEdit, onSave, onCa
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                   Email *
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
+                    id="email"
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className={`w-full pl-12 pr-4 py-3 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 ${
+                    className={`w-full pl-12 pr-4 py-3 lg:py-4 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 text-base ${
                       errors.email ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-primary-500'
                     }`}
                     placeholder="email@exemplo.com"
+                    aria-describedby={errors.email ? "email-error" : undefined}
                   />
                 </div>
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p id="email-error" className="mt-2 text-sm text-red-600 flex items-center gap-1">
                     <AlertCircle className="w-4 h-4" />
                     {errors.email}
                   </p>
@@ -224,23 +232,25 @@ const StudentForm: React.FC<StudentFormProps> = ({ student, isEdit, onSave, onCa
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                   Telefone *
                 </label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
+                    id="phone"
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
-                    className={`w-full pl-12 pr-4 py-3 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 ${
+                    className={`w-full pl-12 pr-4 py-3 lg:py-4 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 text-base ${
                       errors.phone ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-primary-500'
                     }`}
                     placeholder="(11) 99999-9999"
+                    aria-describedby={errors.phone ? "phone-error" : undefined}
                   />
                 </div>
                 {errors.phone && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p id="phone-error" className="mt-2 text-sm text-red-600 flex items-center gap-1">
                     <AlertCircle className="w-4 h-4" />
                     {errors.phone}
                   </p>
@@ -248,22 +258,24 @@ const StudentForm: React.FC<StudentFormProps> = ({ student, isEdit, onSave, onCa
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-2">
                   Data de Nascimento *
                 </label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
+                    id="birthDate"
                     type="date"
                     value={formData.birthDate}
                     onChange={(e) => handleInputChange('birthDate', e.target.value)}
-                    className={`w-full pl-12 pr-4 py-3 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 ${
+                    className={`w-full pl-12 pr-4 py-3 lg:py-4 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 text-base ${
                       errors.birthDate ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-primary-500'
                     }`}
+                    aria-describedby={errors.birthDate ? "birthDate-error" : undefined}
                   />
                 </div>
                 {errors.birthDate && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p id="birthDate-error" className="mt-2 text-sm text-red-600 flex items-center gap-1">
                     <AlertCircle className="w-4 h-4" />
                     {errors.birthDate}
                   </p>
@@ -271,16 +283,17 @@ const StudentForm: React.FC<StudentFormProps> = ({ student, isEdit, onSave, onCa
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
                   Endereço
                 </label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
                   <textarea
+                    id="address"
                     value={formData.address}
                     onChange={(e) => handleInputChange('address', e.target.value)}
                     rows={3}
-                    className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none"
+                    className="w-full pl-12 pr-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
                     placeholder="Rua, número, bairro, cidade, CEP"
                   />
                 </div>
@@ -289,30 +302,32 @@ const StudentForm: React.FC<StudentFormProps> = ({ student, isEdit, onSave, onCa
           </div>
 
           {/* Contato de Emergência */}
-          <div className="bg-white rounded-3xl shadow-3d p-8">
+          <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-6 lg:p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-                <AlertCircle className="w-5 h-5 text-red-600" />
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                <AlertCircle className="w-4 h-4 lg:w-5 lg:h-5 text-red-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-800">Contato de Emergência</h2>
+              <h2 className="text-lg lg:text-xl font-semibold text-gray-800">Contato de Emergência</h2>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4 lg:space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="emergencyContact" className="block text-sm font-medium text-gray-700 mb-2">
                   Nome do Contato *
                 </label>
                 <input
+                  id="emergencyContact"
                   type="text"
                   value={formData.emergencyContact}
                   onChange={(e) => handleInputChange('emergencyContact', e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 ${
+                  className={`w-full px-4 py-3 lg:py-4 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 text-base ${
                     errors.emergencyContact ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-primary-500'
                   }`}
                   placeholder="Nome completo"
+                  aria-describedby={errors.emergencyContact ? "emergencyContact-error" : undefined}
                 />
                 {errors.emergencyContact && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p id="emergencyContact-error" className="mt-2 text-sm text-red-600 flex items-center gap-1">
                     <AlertCircle className="w-4 h-4" />
                     {errors.emergencyContact}
                   </p>
@@ -320,23 +335,25 @@ const StudentForm: React.FC<StudentFormProps> = ({ student, isEdit, onSave, onCa
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="emergencyPhone" className="block text-sm font-medium text-gray-700 mb-2">
                   Telefone de Emergência *
                 </label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
+                    id="emergencyPhone"
                     type="tel"
                     value={formData.emergencyPhone}
                     onChange={(e) => handleInputChange('emergencyPhone', e.target.value)}
-                    className={`w-full pl-12 pr-4 py-3 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 ${
+                    className={`w-full pl-12 pr-4 py-3 lg:py-4 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 text-base ${
                       errors.emergencyPhone ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-primary-500'
                     }`}
                     placeholder="(11) 99999-9999"
+                    aria-describedby={errors.emergencyPhone ? "emergencyPhone-error" : undefined}
                   />
                 </div>
                 {errors.emergencyPhone && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p id="emergencyPhone-error" className="mt-2 text-sm text-red-600 flex items-center gap-1">
                     <AlertCircle className="w-4 h-4" />
                     {errors.emergencyPhone}
                   </p>
@@ -344,13 +361,14 @@ const StudentForm: React.FC<StudentFormProps> = ({ student, isEdit, onSave, onCa
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="plan" className="block text-sm font-medium text-gray-700 mb-2">
                   Plano
                 </label>
                 <select
+                  id="plan"
                   value={formData.plan}
                   onChange={(e) => handleInputChange('plan', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20"
+                  className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 text-base"
                 >
                   {planOptions.map((plan) => (
                     <option key={plan} value={plan}>
@@ -361,13 +379,14 @@ const StudentForm: React.FC<StudentFormProps> = ({ student, isEdit, onSave, onCa
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
                   Status
                 </label>
                 <select
+                  id="status"
                   value={formData.status}
                   onChange={(e) => handleInputChange('status', e.target.value as 'Ativo' | 'Inativo' | 'Suspenso')}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20"
+                  className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 text-base"
                 >
                   <option value="Ativo">Ativo</option>
                   <option value="Inativo">Inativo</option>
@@ -378,46 +397,48 @@ const StudentForm: React.FC<StudentFormProps> = ({ student, isEdit, onSave, onCa
           </div>
 
           {/* Informações Médicas */}
-          <div className="bg-white rounded-3xl shadow-3d p-8">
+          <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-6 lg:p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-                <FileText className="w-5 h-5 text-green-600" />
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                <FileText className="w-4 h-4 lg:w-5 lg:h-5 text-green-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-800">Informações Médicas</h2>
+              <h2 className="text-lg lg:text-xl font-semibold text-gray-800">Informações Médicas</h2>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="medicalHistory" className="block text-sm font-medium text-gray-700 mb-2">
                 Histórico Médico
               </label>
               <textarea
+                id="medicalHistory"
                 value={formData.medicalHistory}
                 onChange={(e) => handleInputChange('medicalHistory', e.target.value)}
                 rows={6}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none"
+                className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
                 placeholder="Descreva condições médicas, lesões, cirurgias, medicamentos em uso, restrições para exercícios..."
               />
             </div>
           </div>
 
           {/* Objetivos */}
-          <div className="bg-white rounded-3xl shadow-3d p-8">
+          <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-6 lg:p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                <Target className="w-5 h-5 text-purple-600" />
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                <Target className="w-4 h-4 lg:w-5 lg:h-5 text-purple-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-800">Objetivos</h2>
+              <h2 className="text-lg lg:text-xl font-semibold text-gray-800">Objetivos</h2>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="objectives" className="block text-sm font-medium text-gray-700 mb-2">
                 Objetivos com o Pilates
               </label>
               <textarea
+                id="objectives"
                 value={formData.objectives}
                 onChange={(e) => handleInputChange('objectives', e.target.value)}
                 rows={6}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none"
+                className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
                 placeholder="Descreva os objetivos do aluno: fortalecimento, flexibilidade, reabilitação, condicionamento físico, alívio de dores..."
               />
             </div>
@@ -425,17 +446,17 @@ const StudentForm: React.FC<StudentFormProps> = ({ student, isEdit, onSave, onCa
         </div>
 
         {/* Botões de Ação */}
-        <div className="flex justify-end gap-4 mt-8">
+        <div className="flex flex-col sm:flex-row justify-end gap-4 mt-6 lg:mt-8">
           <button
             type="button"
             onClick={onCancel}
-            className="px-8 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium transition-all duration-300 hover:bg-gray-50 hover:-translate-y-1"
+            className="w-full sm:w-auto px-6 lg:px-8 py-3 lg:py-4 border border-gray-300 text-gray-700 rounded-xl font-medium transition-all duration-300 hover:bg-gray-50 hover:-translate-y-1 min-h-[44px] text-base"
           >
             Cancelar
           </button>
           <button
             type="submit"
-            className="bg-primary-gradient text-white px-8 py-3 rounded-xl font-medium flex items-center gap-2 transition-all duration-500 hover:shadow-neon hover:-translate-y-1"
+            className="w-full sm:w-auto bg-primary-gradient text-white px-6 lg:px-8 py-3 lg:py-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-all duration-500 hover:shadow-neon hover:-translate-y-1 min-h-[44px] text-base"
           >
             <Save className="w-5 h-5" />
             {isEdit ? 'Atualizar Aluno' : 'Salvar Aluno'}

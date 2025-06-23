@@ -232,59 +232,65 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
   };
 
   return (
-    <div className="p-10 bg-slate-50 min-h-screen">
+    <div className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
       {/* Header */}
-      <header className="flex items-center gap-4 mb-10">
-        <button
-          onClick={() => navigate('/dashboard')}
-          className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-        >
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
-        </button>
-        <button
-          onClick={onCancel}
-          className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-        >
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
-        </button>
-        <div>
-          <h1 className="text-4xl font-bold bg-primary-gradient bg-clip-text text-transparent relative">
+      <header className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6 lg:mb-10">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            aria-label="Voltar ao dashboard"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
+          <button
+            onClick={onCancel}
+            className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            aria-label="Cancelar"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
+        </div>
+        <div className="flex-1">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-primary-gradient bg-clip-text text-transparent relative">
             {isEdit ? 'Editar Instrutor' : 'Novo Instrutor'}
-            <div className="absolute -bottom-2 left-0 w-16 h-1 bg-primary-gradient rounded-full"></div>
+            <div className="absolute -bottom-1 lg:-bottom-2 left-0 w-12 lg:w-16 h-0.5 lg:h-1 bg-primary-gradient rounded-full"></div>
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-sm sm:text-base text-gray-600 mt-2">
             {isEdit ? 'Atualize as informações do instrutor' : 'Preencha os dados do novo instrutor'}
           </p>
         </div>
       </header>
 
-      <form onSubmit={handleSubmit} className="max-w-6xl">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <form onSubmit={handleSubmit} className="max-w-none lg:max-w-6xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           {/* Dados Pessoais */}
-          <div className="bg-white rounded-3xl shadow-3d p-8">
+          <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-6 lg:p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                <User className="w-5 h-5 text-blue-600" />
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                <User className="w-4 h-4 lg:w-5 lg:h-5 text-blue-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-800">Dados Pessoais</h2>
+              <h2 className="text-lg lg:text-xl font-semibold text-gray-800">Dados Pessoais</h2>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4 lg:space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                   Nome Completo *
                 </label>
                 <input
+                  id="name"
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 ${
+                  className={`w-full px-4 py-3 lg:py-4 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 text-base ${
                     errors.name ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-primary-500'
                   }`}
                   placeholder="Digite o nome completo"
+                  aria-describedby={errors.name ? "name-error" : undefined}
                 />
                 {errors.name && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p id="name-error" className="mt-2 text-sm text-red-600 flex items-center gap-1">
                     <AlertCircle className="w-4 h-4" />
                     {errors.name}
                   </p>
@@ -292,23 +298,25 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                   Email *
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
+                    id="email"
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className={`w-full pl-12 pr-4 py-3 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 ${
+                    className={`w-full pl-12 pr-4 py-3 lg:py-4 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 text-base ${
                       errors.email ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-primary-500'
                     }`}
                     placeholder="email@exemplo.com"
+                    aria-describedby={errors.email ? "email-error" : undefined}
                   />
                 </div>
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p id="email-error" className="mt-2 text-sm text-red-600 flex items-center gap-1">
                     <AlertCircle className="w-4 h-4" />
                     {errors.email}
                   </p>
@@ -316,23 +324,25 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                   Telefone *
                 </label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
+                    id="phone"
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
-                    className={`w-full pl-12 pr-4 py-3 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 ${
+                    className={`w-full pl-12 pr-4 py-3 lg:py-4 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 text-base ${
                       errors.phone ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-primary-500'
                     }`}
                     placeholder="(11) 99999-9999"
+                    aria-describedby={errors.phone ? "phone-error" : undefined}
                   />
                 </div>
                 {errors.phone && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p id="phone-error" className="mt-2 text-sm text-red-600 flex items-center gap-1">
                     <AlertCircle className="w-4 h-4" />
                     {errors.phone}
                   </p>
@@ -340,22 +350,24 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-2">
                   Data de Nascimento *
                 </label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
+                    id="birthDate"
                     type="date"
                     value={formData.birthDate}
                     onChange={(e) => handleInputChange('birthDate', e.target.value)}
-                    className={`w-full pl-12 pr-4 py-3 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 ${
+                    className={`w-full pl-12 pr-4 py-3 lg:py-4 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 text-base ${
                       errors.birthDate ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-primary-500'
                     }`}
+                    aria-describedby={errors.birthDate ? "birthDate-error" : undefined}
                   />
                 </div>
                 {errors.birthDate && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p id="birthDate-error" className="mt-2 text-sm text-red-600 flex items-center gap-1">
                     <AlertCircle className="w-4 h-4" />
                     {errors.birthDate}
                   </p>
@@ -363,16 +375,17 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
                   Endereço
                 </label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
                   <textarea
+                    id="address"
                     value={formData.address}
                     onChange={(e) => handleInputChange('address', e.target.value)}
                     rows={3}
-                    className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none"
+                    className="w-full pl-12 pr-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
                     placeholder="Rua, número, bairro, cidade, CEP"
                   />
                 </div>
@@ -381,30 +394,32 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
           </div>
 
           {/* Contato de Emergência */}
-          <div className="bg-white rounded-3xl shadow-3d p-8">
+          <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-6 lg:p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-                <AlertCircle className="w-5 h-5 text-red-600" />
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                <AlertCircle className="w-4 h-4 lg:w-5 lg:h-5 text-red-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-800">Contato de Emergência</h2>
+              <h2 className="text-lg lg:text-xl font-semibold text-gray-800">Contato de Emergência</h2>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4 lg:space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="emergencyContact" className="block text-sm font-medium text-gray-700 mb-2">
                   Nome do Contato *
                 </label>
                 <input
+                  id="emergencyContact"
                   type="text"
                   value={formData.emergencyContact}
                   onChange={(e) => handleInputChange('emergencyContact', e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 ${
+                  className={`w-full px-4 py-3 lg:py-4 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 text-base ${
                     errors.emergencyContact ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-primary-500'
                   }`}
                   placeholder="Nome completo"
+                  aria-describedby={errors.emergencyContact ? "emergencyContact-error" : undefined}
                 />
                 {errors.emergencyContact && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p id="emergencyContact-error" className="mt-2 text-sm text-red-600 flex items-center gap-1">
                     <AlertCircle className="w-4 h-4" />
                     {errors.emergencyContact}
                   </p>
@@ -412,23 +427,25 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="emergencyPhone" className="block text-sm font-medium text-gray-700 mb-2">
                   Telefone de Emergência *
                 </label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
+                    id="emergencyPhone"
                     type="tel"
                     value={formData.emergencyPhone}
                     onChange={(e) => handleInputChange('emergencyPhone', e.target.value)}
-                    className={`w-full pl-12 pr-4 py-3 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 ${
+                    className={`w-full pl-12 pr-4 py-3 lg:py-4 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 text-base ${
                       errors.emergencyPhone ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-primary-500'
                     }`}
                     placeholder="(11) 99999-9999"
+                    aria-describedby={errors.emergencyPhone ? "emergencyPhone-error" : undefined}
                   />
                 </div>
                 {errors.emergencyPhone && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p id="emergencyPhone-error" className="mt-2 text-sm text-red-600 flex items-center gap-1">
                     <AlertCircle className="w-4 h-4" />
                     {errors.emergencyPhone}
                   </p>
@@ -436,40 +453,43 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="hireDate" className="block text-sm font-medium text-gray-700 mb-2">
                   Data de Contratação
                 </label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
+                    id="hireDate"
                     type="date"
                     value={formData.hireDate}
                     onChange={(e) => handleInputChange('hireDate', e.target.value)}
-                    className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20"
+                    className="w-full pl-12 pr-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 text-base"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="hourlyRate" className="block text-sm font-medium text-gray-700 mb-2">
                   Valor por Hora *
                 </label>
                 <div className="relative">
                   <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
+                    id="hourlyRate"
                     type="number"
                     min="0"
                     step="0.01"
                     value={formData.hourlyRate}
                     onChange={(e) => handleInputChange('hourlyRate', parseFloat(e.target.value) || 0)}
-                    className={`w-full pl-12 pr-4 py-3 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 ${
+                    className={`w-full pl-12 pr-4 py-3 lg:py-4 border rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/20 text-base ${
                       errors.hourlyRate ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-primary-500'
                     }`}
                     placeholder="0.00"
+                    aria-describedby={errors.hourlyRate ? "hourlyRate-error" : undefined}
                   />
                 </div>
                 {errors.hourlyRate && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p id="hourlyRate-error" className="mt-2 text-sm text-red-600 flex items-center gap-1">
                     <AlertCircle className="w-4 h-4" />
                     {errors.hourlyRate}
                   </p>
@@ -477,13 +497,14 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
                   Status
                 </label>
                 <select
+                  id="status"
                   value={formData.status}
                   onChange={(e) => handleInputChange('status', e.target.value as 'Ativo' | 'Inativo' | 'Férias')}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20"
+                  className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 text-base"
                 >
                   <option value="Ativo">Ativo</option>
                   <option value="Inativo">Inativo</option>
@@ -494,12 +515,12 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
           </div>
 
           {/* Especialidades */}
-          <div className="bg-white rounded-3xl shadow-3d p-8">
+          <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-6 lg:p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                <Award className="w-5 h-5 text-purple-600" />
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                <Award className="w-4 h-4 lg:w-5 lg:h-5 text-purple-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-800">Especialidades</h2>
+              <h2 className="text-lg lg:text-xl font-semibold text-gray-800">Especialidades</h2>
             </div>
 
             <div className="space-y-4">
@@ -507,7 +528,7 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Especialidades Comuns
                 </label>
-                <div className="grid grid-cols-2  gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {commonSpecialties.map((specialty) => (
                     <button
                       key={specialty}
@@ -517,7 +538,7 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
                           handleInputChange('specialties', [...formData.specialties, specialty]);
                         }
                       }}
-                      className={`p-2 text-sm rounded-lg border transition-all duration-200 ${
+                      className={`p-3 text-sm rounded-lg border transition-all duration-200 min-h-[44px] ${
                         formData.specialties.includes(specialty)
                           ? 'bg-primary-500 text-white border-primary-500'
                           : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'
@@ -530,22 +551,23 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="newSpecialty" className="block text-sm font-medium text-gray-700 mb-2">
                   Adicionar Especialidade Personalizada
                 </label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <input
+                    id="newSpecialty"
                     type="text"
                     value={newSpecialty}
                     onChange={(e) => setNewSpecialty(e.target.value)}
-                    className="flex-1 px-4 py-3 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20"
+                    className="flex-1 px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 text-base"
                     placeholder="Digite uma especialidade"
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSpecialty())}
                   />
                   <button
                     type="button"
                     onClick={addSpecialty}
-                    className="px-4 py-3 bg-primary-gradient text-white rounded-xl hover:shadow-lg transition-all duration-300"
+                    className="px-4 py-3 lg:py-4 bg-primary-gradient text-white rounded-xl hover:shadow-lg transition-all duration-300 min-h-[44px] min-w-[44px] flex items-center justify-center"
                   >
                     <Plus className="w-5 h-5" />
                   </button>
@@ -560,13 +582,14 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
                   {formData.specialties.map((specialty) => (
                     <span
                       key={specialty}
-                      className="flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
+                      className="flex items-center gap-2 px-3 py-2 bg-blue-100 text-blue-700 rounded-full text-sm"
                     >
                       {specialty}
                       <button
                         type="button"
                         onClick={() => removeSpecialty(specialty)}
-                        className="text-blue-500 hover:text-blue-700"
+                        className="text-blue-500 hover:text-blue-700 min-h-[24px] min-w-[24px] flex items-center justify-center"
+                        aria-label={`Remover ${specialty}`}
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -574,7 +597,7 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
                   ))}
                 </div>
                 {errors.specialties && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
                     <AlertCircle className="w-4 h-4" />
                     {errors.specialties}
                   </p>
@@ -584,32 +607,33 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
           </div>
 
           {/* Certificações */}
-          <div className="bg-white rounded-3xl shadow-3d p-8">
+          <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-6 lg:p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-green-600" />
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                <BookOpen className="w-4 h-4 lg:w-5 lg:h-5 text-green-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-800">Certificações</h2>
+              <h2 className="text-lg lg:text-xl font-semibold text-gray-800">Certificações</h2>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="newCertification" className="block text-sm font-medium text-gray-700 mb-2">
                   Adicionar Certificação
                 </label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <input
+                    id="newCertification"
                     type="text"
                     value={newCertification}
                     onChange={(e) => setNewCertification(e.target.value)}
-                    className="flex-1 px-4 py-3 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20"
+                    className="flex-1 px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 text-base"
                     placeholder="Digite uma certificação"
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCertification())}
                   />
                   <button
                     type="button"
                     onClick={addCertification}
-                    className="px-4 py-3 bg-primary-gradient text-white rounded-xl hover:shadow-lg transition-all duration-300"
+                    className="px-4 py-3 lg:py-4 bg-primary-gradient text-white rounded-xl hover:shadow-lg transition-all duration-300 min-h-[44px] min-w-[44px] flex items-center justify-center"
                   >
                     <Plus className="w-5 h-5" />
                   </button>
@@ -624,13 +648,14 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
                   {formData.certifications.map((certification, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-xl"
+                      className="flex items-center justify-between p-3 lg:p-4 bg-gray-50 rounded-xl"
                     >
-                      <span className="text-gray-700">{certification}</span>
+                      <span className="text-gray-700 flex-1">{certification}</span>
                       <button
                         type="button"
                         onClick={() => removeCertification(certification)}
-                        className="text-red-500 hover:text-red-700"
+                        className="text-red-500 hover:text-red-700 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                        aria-label={`Remover ${certification}`}
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -646,15 +671,15 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
         </div>
 
         {/* Horários de Trabalho */}
-        <div className="bg-white rounded-3xl shadow-3d p-8 mt-8">
+        <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-6 lg:p-8 mt-6 lg:mt-8">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
-              <Clock className="w-5 h-5 text-orange-600" />
+            <div className="w-8 h-8 lg:w-10 lg:h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+              <Clock className="w-4 h-4 lg:w-5 lg:h-5 text-orange-600" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-800">Horários de Trabalho</h2>
+            <h2 className="text-lg lg:text-xl font-semibold text-gray-800">Horários de Trabalho</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {daysOfWeek.map(({ key, label }) => (
               <div key={key} className="p-4 border border-gray-200 rounded-xl">
                 <div className="flex items-center justify-between mb-3">
@@ -694,46 +719,48 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
         </div>
 
         {/* Experiência e Bio */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-          <div className="bg-white rounded-3xl shadow-3d p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mt-6 lg:mt-8">
+          <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-6 lg:p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
-                <Award className="w-5 h-5 text-indigo-600" />
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
+                <Award className="w-4 h-4 lg:w-5 lg:h-5 text-indigo-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-800">Experiência</h2>
+              <h2 className="text-lg lg:text-xl font-semibold text-gray-800">Experiência</h2>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="experience" className="block text-sm font-medium text-gray-700 mb-2">
                 Experiência Profissional
               </label>
               <textarea
+                id="experience"
                 value={formData.experience}
                 onChange={(e) => handleInputChange('experience', e.target.value)}
                 rows={6}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none"
+                className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
                 placeholder="Descreva a experiência profissional, tempo de atuação, especializações..."
               />
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-3d p-8">
+          <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-6 lg:p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
-                <User className="w-5 h-5 text-pink-600" />
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-pink-100 rounded-xl flex items-center justify-center">
+                <User className="w-4 h-4 lg:w-5 lg:h-5 text-pink-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-800">Biografia</h2>
+              <h2 className="text-lg lg:text-xl font-semibold text-gray-800">Biografia</h2>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">
                 Biografia Profissional
               </label>
               <textarea
+                id="bio"
                 value={formData.bio}
                 onChange={(e) => handleInputChange('bio', e.target.value)}
                 rows={6}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none"
+                className="w-full px-4 py-3 lg:py-4 border border-gray-200 rounded-xl transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 resize-none text-base"
                 placeholder="Biografia que será exibida para os alunos, filosofia de trabalho, motivações..."
               />
             </div>
@@ -741,17 +768,17 @@ const InstructorForm: React.FC<InstructorFormProps> = ({ instructor, isEdit, onS
         </div>
 
         {/* Botões de Ação */}
-        <div className="flex justify-end gap-4 mt-8">
+        <div className="flex flex-col sm:flex-row justify-end gap-4 mt-6 lg:mt-8">
           <button
             type="button"
             onClick={onCancel}
-            className="px-8 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium transition-all duration-300 hover:bg-gray-50 hover:-translate-y-1"
+            className="w-full sm:w-auto px-6 lg:px-8 py-3 lg:py-4 border border-gray-300 text-gray-700 rounded-xl font-medium transition-all duration-300 hover:bg-gray-50 hover:-translate-y-1 min-h-[44px] text-base"
           >
             Cancelar
           </button>
           <button
             type="submit"
-            className="bg-primary-gradient text-white px-8 py-3 rounded-xl font-medium flex items-center gap-2 transition-all duration-500 hover:shadow-neon hover:-translate-y-1"
+            className="w-full sm:w-auto bg-primary-gradient text-white px-6 lg:px-8 py-3 lg:py-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-all duration-500 hover:shadow-neon hover:-translate-y-1 min-h-[44px] text-base"
           >
             <Save className="w-5 h-5" />
             {isEdit ? 'Atualizar Instrutor' : 'Salvar Instrutor'}
