@@ -4,6 +4,7 @@ import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import StudentManagement from './components/StudentManagement';
 import InstructorManagement from './components/InstructorManagement';
+import ScheduleManagement from './components/ScheduleManagement';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/students" element={<StudentManagement />} />
           <Route path="/instructors" element={<InstructorManagement />} />
+          <Route path="/schedule" element={<ScheduleManagement />} />
           <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>
