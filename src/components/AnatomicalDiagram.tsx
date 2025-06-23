@@ -16,7 +16,7 @@ interface AnatomicalDiagramProps {
   onMarkerRemove: (markerId: string) => void;
 }
 
-// Definição das áreas anatômicas com coordenadas precisas para o modelo realista
+// Definição das áreas anatômicas com coordenadas corrigidas e não sobrepostas
 const BODY_PARTS = {
   head: {
     name: 'Cabeça',
@@ -30,21 +30,21 @@ const BODY_PARTS = {
   },
   leftShoulder: {
     name: 'Ombro Esquerdo',
-    bounds: { x: 165, y: 140, width: 55, height: 45 },
+    bounds: { x: 165, y: 140, width: 50, height: 45 },
     center: { x: 192, y: 162 }
   },
   rightShoulder: {
     name: 'Ombro Direito',
-    bounds: { x: 280, y: 140, width: 55, height: 45 },
+    bounds: { x: 285, y: 140, width: 50, height: 45 },
     center: { x: 308, y: 162 }
   },
   leftUpperArm: {
-    name: 'Braço Esquerdo Superior',
+    name: 'Braço Esquerdo',
     bounds: { x: 155, y: 185, width: 40, height: 90 },
     center: { x: 175, y: 230 }
   },
   rightUpperArm: {
-    name: 'Braço Direito Superior',
+    name: 'Braço Direito',
     bounds: { x: 305, y: 185, width: 40, height: 90 },
     center: { x: 325, y: 230 }
   },
@@ -80,88 +80,88 @@ const BODY_PARTS = {
   },
   leftHand: {
     name: 'Mão Esquerda',
-    bounds: { x: 145, y: 395, width: 35, height: 50 },
+    bounds: { x: 145, y: 395, width: 35, height: 55 },
     center: { x: 162, y: 420 }
   },
   rightHand: {
     name: 'Mão Direita',
-    bounds: { x: 320, y: 395, width: 35, height: 50 },
+    bounds: { x: 320, y: 395, width: 35, height: 55 },
     center: { x: 337, y: 420 }
   },
   upperChest: {
     name: 'Tórax Superior',
-    bounds: { x: 190, y: 150, width: 120, height: 70 },
-    center: { x: 250, y: 185 }
+    bounds: { x: 215, y: 150, width: 70, height: 40 },
+    center: { x: 250, y: 170 }
   },
   lowerChest: {
     name: 'Tórax Inferior',
-    bounds: { x: 200, y: 220, width: 100, height: 50 },
-    center: { x: 250, y: 245 }
+    bounds: { x: 220, y: 190, width: 60, height: 35 },
+    center: { x: 250, y: 207 }
   },
   upperAbdomen: {
     name: 'Abdômen Superior',
-    bounds: { x: 210, y: 270, width: 80, height: 45 },
-    center: { x: 250, y: 292 }
+    bounds: { x: 225, y: 225, width: 50, height: 35 },
+    center: { x: 250, y: 242 }
   },
   lowerAbdomen: {
     name: 'Abdômen Inferior',
-    bounds: { x: 215, y: 315, width: 70, height: 50 },
-    center: { x: 250, y: 340 }
+    bounds: { x: 230, y: 260, width: 40, height: 40 },
+    center: { x: 250, y: 280 }
   },
   pelvis: {
     name: 'Pelve/Quadril',
-    bounds: { x: 200, y: 340, width: 100, height: 70 },
-    center: { x: 250, y: 375 }
+    bounds: { x: 215, y: 300, width: 70, height: 50 },
+    center: { x: 250, y: 325 }
   },
   leftThigh: {
     name: 'Coxa Esquerda',
-    bounds: { x: 200, y: 410, width: 45, height: 120 },
-    center: { x: 222, y: 470 }
+    bounds: { x: 200, y: 350, width: 45, height: 120 },
+    center: { x: 222, y: 410 }
   },
   rightThigh: {
     name: 'Coxa Direita',
-    bounds: { x: 255, y: 410, width: 45, height: 120 },
-    center: { x: 277, y: 470 }
+    bounds: { x: 255, y: 350, width: 45, height: 120 },
+    center: { x: 277, y: 410 }
   },
   leftKnee: {
     name: 'Joelho Esquerdo',
-    bounds: { x: 205, y: 525, width: 35, height: 30 },
-    center: { x: 222, y: 540 }
+    bounds: { x: 205, y: 470, width: 35, height: 35 },
+    center: { x: 222, y: 487 }
   },
   rightKnee: {
     name: 'Joelho Direito',
-    bounds: { x: 260, y: 525, width: 35, height: 30 },
-    center: { x: 277, y: 540 }
+    bounds: { x: 260, y: 470, width: 35, height: 35 },
+    center: { x: 277, y: 487 }
   },
   leftCalf: {
     name: 'Panturrilha Esquerda',
-    bounds: { x: 205, y: 555, width: 35, height: 100 },
-    center: { x: 222, y: 605 }
+    bounds: { x: 205, y: 505, width: 35, height: 100 },
+    center: { x: 222, y: 555 }
   },
   rightCalf: {
     name: 'Panturrilha Direita',
-    bounds: { x: 260, y: 555, width: 35, height: 100 },
-    center: { x: 277, y: 605 }
+    bounds: { x: 260, y: 505, width: 35, height: 100 },
+    center: { x: 277, y: 555 }
   },
   leftAnkle: {
     name: 'Tornozelo Esquerdo',
-    bounds: { x: 210, y: 650, width: 25, height: 20 },
-    center: { x: 222, y: 660 }
+    bounds: { x: 210, y: 605, width: 25, height: 20 },
+    center: { x: 222, y: 615 }
   },
   rightAnkle: {
     name: 'Tornozelo Direito',
-    bounds: { x: 265, y: 650, width: 25, height: 20 },
-    center: { x: 277, y: 660 }
+    bounds: { x: 265, y: 605, width: 25, height: 20 },
+    center: { x: 277, y: 615 }
   },
   leftFoot: {
     name: 'Pé Esquerdo',
-    bounds: { x: 195, y: 670, width: 40, height: 30 },
-    center: { x: 215, y: 685 }
+    bounds: { x: 195, y: 625, width: 40, height: 35 },
+    center: { x: 215, y: 642 }
   },
   rightFoot: {
     name: 'Pé Direito',
-    bounds: { x: 265, y: 670, width: 40, height: 30 },
-    center: { x: 285, y: 685 }
+    bounds: { x: 265, y: 625, width: 40, height: 35 },
+    center: { x: 285, y: 642 }
   }
 };
 
@@ -218,6 +218,10 @@ const AnatomicalDiagram: React.FC<AnatomicalDiagramProps> = ({
   const handleSvgClick = useCallback((event: React.MouseEvent<SVGSVGElement>) => {
     if (!svgRef.current) return;
 
+    // Prevenir propagação para evitar conflitos
+    event.preventDefault();
+    event.stopPropagation();
+
     const rect = svgRef.current.getBoundingClientRect();
     const scaleX = 500 / rect.width;
     const scaleY = 700 / rect.height;
@@ -227,10 +231,20 @@ const AnatomicalDiagram: React.FC<AnatomicalDiagramProps> = ({
       y: (event.clientY - rect.top) * scaleY
     };
 
+    console.log('Clique detectado em:', point); // Debug
+
     const bodyPart = findBodyPartAtPoint(point);
+    
+    console.log('Parte do corpo encontrada:', bodyPart); // Debug
     
     if (bodyPart) {
       setSelectedBodyPart(bodyPart);
+      setMarkerPosition(point);
+      setShowMarkerForm(true);
+      setMarkerDescription('');
+    } else {
+      // Se não encontrou uma parte específica, ainda permite adicionar marcação
+      setSelectedBodyPart('geral');
       setMarkerPosition(point);
       setShowMarkerForm(true);
       setMarkerDescription('');
@@ -242,16 +256,18 @@ const AnatomicalDiagram: React.FC<AnatomicalDiagramProps> = ({
   }, []);
 
   const handleAddMarker = useCallback(() => {
-    if (!markerPosition || !selectedBodyPart || !markerDescription.trim()) return;
+    if (!markerPosition || !markerDescription.trim()) return;
 
-    const bodyPart = BODY_PARTS[selectedBodyPart as keyof typeof BODY_PARTS];
+    const bodyPartName = selectedBodyPart && selectedBodyPart !== 'geral' 
+      ? BODY_PARTS[selectedBodyPart as keyof typeof BODY_PARTS]?.name || selectedBodyPart
+      : 'Área Geral';
     
     onMarkerAdd({
       x: markerPosition.x,
       y: markerPosition.y,
       type: markerType,
       description: markerDescription.trim(),
-      bodyPart: bodyPart?.name || selectedBodyPart
+      bodyPart: bodyPartName
     });
 
     setShowMarkerForm(false);
@@ -304,7 +320,7 @@ const AnatomicalDiagram: React.FC<AnatomicalDiagramProps> = ({
           <div className="bg-white p-6 rounded-xl border border-gray-200 relative">
             <h4 className="font-medium text-gray-800 mb-4 text-center">
               Modelo Anatômico Interativo
-              {hoveredBodyPart && (
+              {hoveredBodyPart && hoveredBodyPart !== 'geral' && (
                 <span className="block text-sm text-blue-600 mt-1">
                   {BODY_PARTS[hoveredBodyPart as keyof typeof BODY_PARTS]?.name}
                 </span>
@@ -317,6 +333,7 @@ const AnatomicalDiagram: React.FC<AnatomicalDiagramProps> = ({
                 viewBox="0 0 500 700"
                 className="w-full max-w-md h-auto cursor-crosshair border border-gray-200 rounded-lg"
                 onClick={handleSvgClick}
+                style={{ userSelect: 'none' }}
               >
                 {/* Definições de gradientes e sombras para realismo */}
                 <defs>
@@ -347,33 +364,8 @@ const AnatomicalDiagram: React.FC<AnatomicalDiagramProps> = ({
                 {/* Fundo */}
                 <rect width="500" height="700" fill="#f8fafc" />
                 
-                {/* Áreas invisíveis para detecção de hover/click */}
-                {Object.entries(BODY_PARTS).map(([partKey, part]) => (
-                  <rect
-                    key={`area-${partKey}`}
-                    x={part.bounds.x}
-                    y={part.bounds.y}
-                    width={part.bounds.width}
-                    height={part.bounds.height}
-                    fill={
-                      selectedBodyPart === partKey
-                        ? 'rgba(59, 130, 246, 0.3)'
-                        : hoveredBodyPart === partKey
-                        ? 'rgba(96, 165, 250, 0.2)'
-                        : 'transparent'
-                    }
-                    stroke={
-                      selectedBodyPart === partKey || hoveredBodyPart === partKey
-                        ? '#3b82f6'
-                        : 'transparent'
-                    }
-                    strokeWidth="2"
-                    className="transition-all duration-200"
-                    onMouseEnter={() => handleBodyPartHover(partKey)}
-                    onMouseLeave={() => handleBodyPartHover(null)}
-                  />
-                ))}
-
+                {/* Áreas invisíveis para detecção de hover/click - REMOVIDAS para evitar conflito */}
+                
                 {/* Modelo Anatômico Realista */}
                 <g filter="url(#shadow)">
                   
@@ -630,11 +622,17 @@ const AnatomicalDiagram: React.FC<AnatomicalDiagramProps> = ({
               Adicionar Marcação
             </h3>
             
-            {selectedBodyPart && (
+            {selectedBodyPart && selectedBodyPart !== 'geral' && (
               <p className="text-sm text-gray-600 mb-4">
                 Parte selecionada: <strong>
                   {BODY_PARTS[selectedBodyPart as keyof typeof BODY_PARTS]?.name}
                 </strong>
+              </p>
+            )}
+
+            {selectedBodyPart === 'geral' && (
+              <p className="text-sm text-gray-600 mb-4">
+                Área selecionada: <strong>Área Geral</strong>
               </p>
             )}
 
