@@ -16,7 +16,8 @@ import {
   XCircle,
   AlertCircle,
   MapPin,
-  Phone
+  Phone,
+  Users
 } from 'lucide-react';
 import ScheduleForm from './ScheduleForm';
 import ScheduleDetails from './ScheduleDetails';
@@ -273,29 +274,36 @@ const ScheduleManagement = () => {
   }
 
   return (
-    <div className="p-10 bg-slate-50 min-h-screen">
+    <div className="p-4 sm:p-6 lg:p-10 bg-slate-50 min-h-screen">
       {/* Header */}
-      <header className="flex justify-between items-center mb-10">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 lg:mb-10">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate('/dashboard')}
-            className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+            className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
           <div>
-            <h1 className="text-4xl font-bold bg-primary-gradient bg-clip-text text-transparent relative">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-primary-gradient bg-clip-text text-transparent relative">
               Gestão de Agenda
-              <div className="absolute -bottom-2 left-0 w-16 h-1 bg-primary-gradient rounded-full"></div>
+              <div className="absolute -bottom-1 lg:-bottom-2 left-0 w-12 lg:w-16 h-0.5 lg:h-1 bg-primary-gradient rounded-full"></div>
             </h1>
-            <p className="text-gray-600 mt-2">Gerencie todos os agendamentos do seu estúdio</p>
+            <p className="text-sm sm:text-base text-gray-600 mt-2">Gerencie todos os agendamentos do seu estúdio</p>
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+          <button
+            onClick={() => navigate('/schedule-capacity')}
+            className="bg-secondary-gradient text-white px-4 sm:px-6 py-3 rounded-xl font-medium flex items-center gap-2 transition-all duration-500 hover:shadow-lg hover:-translate-y-1 text-sm sm:text-base min-h-[44px] justify-center"
+          >
+            <Users className="w-5 h-5" />
+            Ver Capacidade
+          </button>
           <div className="flex bg-white rounded-xl shadow-md overflow-hidden">
             <button
               onClick={() => setViewMode('list')}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
+              className={`px-3 sm:px-4 py-2 text-sm font-medium transition-colors min-h-[44px] ${
                 viewMode === 'list' 
                   ? 'bg-primary-500 text-white' 
                   : 'text-gray-600 hover:bg-gray-50'
@@ -305,7 +313,7 @@ const ScheduleManagement = () => {
             </button>
             <button
               onClick={() => setViewMode('calendar')}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
+              className={`px-3 sm:px-4 py-2 text-sm font-medium transition-colors min-h-[44px] ${
                 viewMode === 'calendar' 
                   ? 'bg-primary-500 text-white' 
                   : 'text-gray-600 hover:bg-gray-50'
@@ -316,7 +324,7 @@ const ScheduleManagement = () => {
           </div>
           <button 
             onClick={handleAddSchedule}
-            className="bg-primary-gradient text-white px-6 py-3 rounded-xl font-medium flex items-center gap-2 transition-all duration-500 hover:shadow-neon hover:-translate-y-1"
+            className="bg-primary-gradient text-white px-4 sm:px-6 py-3 rounded-xl font-medium flex items-center gap-2 transition-all duration-500 hover:shadow-neon hover:-translate-y-1 text-sm sm:text-base min-h-[44px] justify-center"
           >
             <Plus className="w-5 h-5" />
             Novo Agendamento
@@ -325,25 +333,25 @@ const ScheduleManagement = () => {
       </header>
 
       {/* Filtros e Busca */}
-      <div className="bg-white rounded-3xl shadow-3d p-6 mb-8">
-        <div className="flex flex-col lg:flex-row gap-4 items-center">
-          <div className="relative flex-1">
+      <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-4 sm:p-6 mb-6 lg:mb-8">
+        <div className="flex flex-col gap-4">
+          <div className="relative">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
               placeholder="Buscar por aluno, instrutor, tipo de aula ou sala..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl bg-slate-50 transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 focus:bg-white"
+              className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl bg-slate-50 transition-all duration-300 focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 focus:bg-white text-base"
             />
           </div>
-          <div className="flex items-center gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="flex items-center gap-2">
               <Filter className="w-5 h-5 text-gray-400" />
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-4 py-3 border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-primary-500"
+                className="flex-1 px-4 py-3 border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-primary-500 text-base"
               >
                 <option value="Todos">Todos os Status</option>
                 <option value="Agendado">Agendado</option>
@@ -357,12 +365,12 @@ const ScheduleManagement = () => {
               type="date"
               value={filterDate}
               onChange={(e) => setFilterDate(e.target.value)}
-              className="px-4 py-3 border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-primary-500"
+              className="px-4 py-3 border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-primary-500 text-base"
             />
             <select
               value={filterInstructor}
               onChange={(e) => setFilterInstructor(e.target.value)}
-              className="px-4 py-3 border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-primary-500"
+              className="px-4 py-3 border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-primary-500 text-base"
             >
               <option value="Todos">Todos Instrutores</option>
               {allInstructors.map((instructor) => (
@@ -376,71 +384,71 @@ const ScheduleManagement = () => {
       </div>
 
       {/* Estatísticas Rápidas */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-3xl shadow-3d">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-6 lg:mb-8">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl lg:rounded-3xl shadow-3d">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm">Hoje</p>
-              <p className="text-2xl font-bold text-blue-600">{getTodaySchedules().length}</p>
+              <p className="text-xl sm:text-2xl font-bold text-blue-600">{getTodaySchedules().length}</p>
             </div>
-            <Calendar className="w-8 h-8 text-blue-500" />
+            <Calendar className="w-6 sm:w-8 h-6 sm:h-8 text-blue-500" />
           </div>
         </div>
-        <div className="bg-white p-6 rounded-3xl shadow-3d">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl lg:rounded-3xl shadow-3d">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm">Próximas</p>
-              <p className="text-2xl font-bold text-green-600">{getUpcomingSchedules().length}</p>
+              <p className="text-xl sm:text-2xl font-bold text-green-600">{getUpcomingSchedules().length}</p>
             </div>
-            <Clock className="w-8 h-8 text-green-500" />
+            <Clock className="w-6 sm:w-8 h-6 sm:h-8 text-green-500" />
           </div>
         </div>
-        <div className="bg-white p-6 rounded-3xl shadow-3d">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl lg:rounded-3xl shadow-3d">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm">Confirmados</p>
-              <p className="text-2xl font-bold text-purple-600">
+              <p className="text-xl sm:text-2xl font-bold text-purple-600">
                 {schedules.filter(s => s.status === 'Confirmado').length}
               </p>
             </div>
-            <CheckCircle className="w-8 h-8 text-purple-500" />
+            <CheckCircle className="w-6 sm:w-8 h-6 sm:h-8 text-purple-500" />
           </div>
         </div>
-        <div className="bg-white p-6 rounded-3xl shadow-3d">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl lg:rounded-3xl shadow-3d">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm">Concluídos</p>
-              <p className="text-2xl font-bold text-indigo-600">
+              <p className="text-xl sm:text-2xl font-bold text-indigo-600">
                 {schedules.filter(s => s.status === 'Concluído').length}
               </p>
             </div>
-            <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-              <div className="w-3 h-3 bg-indigo-500 rounded-full"></div>
+            <div className="w-6 sm:w-8 h-6 sm:h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+              <div className="w-2 sm:w-3 h-2 sm:h-3 bg-indigo-500 rounded-full"></div>
             </div>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-3xl shadow-3d">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl lg:rounded-3xl shadow-3d">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm">Receita Hoje</p>
-              <p className="text-2xl font-bold text-green-600">
+              <p className="text-xl sm:text-2xl font-bold text-green-600">
                 R$ {getTodaySchedules()
                   .filter(s => s.paymentStatus === 'Pago')
                   .reduce((acc, s) => acc + s.price, 0)
                   .toLocaleString()}
               </p>
             </div>
-            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <div className="w-6 sm:w-8 h-6 sm:h-8 bg-green-100 rounded-full flex items-center justify-center">
+              <div className="w-2 sm:w-3 h-2 sm:h-3 bg-green-500 rounded-full"></div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Lista de Agendamentos */}
-      <div className="bg-white rounded-3xl shadow-3d overflow-hidden">
-        <div className="p-6 border-b border-gray-100">
-          <h2 className="text-xl font-semibold text-gray-800">
+      <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d overflow-hidden">
+        <div className="p-4 sm:p-6 border-b border-gray-100">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
             Agendamentos ({filteredSchedules.length})
           </h2>
         </div>
@@ -449,14 +457,14 @@ const ScheduleManagement = () => {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="text-left p-4 font-semibold text-gray-700">Data/Hora</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Aluno</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Instrutor</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Tipo/Sala</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Status</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Pagamento</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Valor</th>
-                <th className="text-left p-4 font-semibold text-gray-700">Ações</th>
+                <th className="text-left p-4 font-semibold text-gray-700 text-sm sm:text-base">Data/Hora</th>
+                <th className="text-left p-4 font-semibold text-gray-700 text-sm sm:text-base">Aluno</th>
+                <th className="text-left p-4 font-semibold text-gray-700 text-sm sm:text-base">Instrutor</th>
+                <th className="text-left p-4 font-semibold text-gray-700 text-sm sm:text-base">Tipo/Sala</th>
+                <th className="text-left p-4 font-semibold text-gray-700 text-sm sm:text-base">Status</th>
+                <th className="text-left p-4 font-semibold text-gray-700 text-sm sm:text-base">Pagamento</th>
+                <th className="text-left p-4 font-semibold text-gray-700 text-sm sm:text-base">Valor</th>
+                <th className="text-left p-4 font-semibold text-gray-700 text-sm sm:text-base">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -482,18 +490,18 @@ const ScheduleManagement = () => {
                   <td className="p-4">
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4 text-blue-500" />
-                      <span className="font-medium text-gray-800">{schedule.studentName}</span>
+                      <span className="font-medium text-gray-800 text-sm sm:text-base">{schedule.studentName}</span>
                     </div>
                   </td>
                   <td className="p-4">
                     <div className="flex items-center gap-2">
                       <GraduationCap className="w-4 h-4 text-purple-500" />
-                      <span className="text-gray-700">{schedule.instructorName}</span>
+                      <span className="text-gray-700 text-sm sm:text-base">{schedule.instructorName}</span>
                     </div>
                   </td>
                   <td className="p-4">
                     <div className="space-y-1">
-                      <span className="text-gray-800 font-medium">{schedule.type}</span>
+                      <span className="text-gray-800 font-medium text-sm sm:text-base">{schedule.type}</span>
                       <div className="flex items-center gap-1 text-sm text-gray-600">
                         <MapPin className="w-3 h-3" />
                         {schedule.room}
@@ -519,27 +527,27 @@ const ScheduleManagement = () => {
                     </span>
                   </td>
                   <td className="p-4">
-                    <span className="font-semibold text-green-600">R$ {schedule.price}</span>
+                    <span className="font-semibold text-green-600 text-sm sm:text-base">R$ {schedule.price}</span>
                   </td>
                   <td className="p-4">
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleViewSchedule(schedule)}
-                        className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors duration-200"
+                        className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center"
                         title="Visualizar"
                       >
                         <Eye className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleEditSchedule(schedule)}
-                        className="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors duration-200"
+                        className="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center"
                         title="Editar"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteSchedule(schedule.id)}
-                        className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
+                        className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center"
                         title="Excluir"
                       >
                         <Trash2 className="w-4 h-4" />

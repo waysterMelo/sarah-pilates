@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard';
 import StudentManagement from './components/StudentManagement';
 import InstructorManagement from './components/InstructorManagement';
 import ScheduleManagement from './components/ScheduleManagement';
+import ScheduleCapacity from './components/ScheduleCapacity';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/students" element={<StudentManagement />} />
           <Route path="/instructors" element={<InstructorManagement />} />
           <Route path="/schedule" element={<ScheduleManagement />} />
+          <Route path="/schedule-capacity" element={<ScheduleCapacity />} />
           <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>
