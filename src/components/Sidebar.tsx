@@ -22,7 +22,7 @@ const Sidebar = () => {
     { icon: GraduationCap, label: 'Instrutores', path: '/instructors' },
     { icon: Calendar, label: 'Agenda', path: '/schedule' },
     { icon: ClipboardList, label: 'Avaliações', path: '/evaluations' },
-    { icon: FileText, label: 'Fichas', path: '/records' },
+    { icon: FileText, label: 'Evolução', path: '/records' },
     { icon: Settings, label: 'Configurações', path: '/settings' },
   ];
 
