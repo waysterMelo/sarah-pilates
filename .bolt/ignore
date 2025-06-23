@@ -1,0 +1,14 @@
+AnatomicalDiagram.tsx
+EvaluationDetails.tsx
+EvaluationForm.tsx
+EvaluationManagement.tsx
+InstructorDetails.tsx
+InstructorForm.tsx
+InstructorManagement.tsx
+Login.tsx
+ScheduleDetails.tsx
+ScheduleTable.tsx
+ScheduleCapacity.tsx
+StatsGrid.tsx
+StudentDetails.tsx
+StudentManagement.tsx
