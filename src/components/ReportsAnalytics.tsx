@@ -14,8 +14,7 @@ import {
   Activity,
   Target,
   Clock,
-  Award,
-  AlertTriangle
+  Award
 } from 'lucide-react';
 
 interface ReportData {
