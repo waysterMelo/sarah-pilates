@@ -8,7 +8,7 @@ API RESTful completa para o sistema de gestão do estúdio de Pilates "Sarah Pil
 - **Express.js** - Framework web
 - **TypeScript** - Tipagem estática
 - **Prisma** - ORM para banco de dados
-- **PostgreSQL** - Banco de dados
+- **MySQL** - Banco de dados
 - **JWT** - Autenticação
 - **Zod** - Validação de schemas
 - **Nodemailer** - Envio de emails
@@ -17,7 +17,7 @@ API RESTful completa para o sistema de gestão do estúdio de Pilates "Sarah Pil
 ## 📋 Pré-requisitos
 
 - Node.js 18+
-- PostgreSQL 12+
+- MySQL 8.0+
 - npm ou yarn
 
 ## ⚙️ Instalação
@@ -33,29 +33,39 @@ cd backend
 npm install
 ```
 
-3. **Configure as variáveis de ambiente**
+3. **Configure o MySQL**
+
+Crie o banco de dados no MySQL:
+```sql
+CREATE DATABASE sarah_pilates;
+CREATE USER 'sarah_user'@'localhost' IDENTIFIED BY 'senha_forte';
+GRANT ALL PRIVILEGES ON sarah_pilates.* TO 'sarah_user'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+4. **Configure as variáveis de ambiente**
 ```bash
 cp .env.example .env
 ```
 
 Edite o arquivo `.env` com suas configurações:
 ```env
-DATABASE_URL="postgresql://user:password@localhost:5432/sarah_pilates"
+DATABASE_URL="mysql://sarah_user:senha_forte@localhost:3306/sarah_pilates"
 JWT_SECRET="your-super-secret-jwt-key"
 # ... outras variáveis
 ```
 
-4. **Execute as migrações do banco**
+5. **Execute as migrações do banco**
 ```bash
 npm run db:migrate
 ```
 
-5. **Execute o seed (dados iniciais)**
+6. **Execute o seed (dados iniciais)**
 ```bash
 npm run db:seed
 ```
 
-6. **Inicie o servidor de desenvolvimento**
+7. **Inicie o servidor de desenvolvimento**
 ```bash
 npm run dev
 ```
@@ -199,7 +209,7 @@ Os logs são automaticamente gerados em development e incluem:
    - Configure email de produção
 
 2. **Banco de dados**
-   - Configure PostgreSQL em produção
+   - Configure MySQL em produção
    - Execute migrações
    - Execute seed se necessário
 
@@ -213,6 +223,17 @@ Os logs são automaticamente gerados em development e incluem:
 npm install -g pm2
 npm run build
 pm2 start dist/app.js --name "sarah-pilates-api"
+```
+
+### Configuração MySQL para Produção
+
+```sql
+-- Criar usuário de produção
+CREATE USER 'sarah_prod'@'%' IDENTIFIED BY 'senha_super_forte';
+GRANT ALL PRIVILEGES ON sarah_pilates.* TO 'sarah_prod'@'%';
+
+-- Configurações de segurança recomendadas
+SET GLOBAL sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO';
 ```
 
 ## 🤝 Contribuição
@@ -232,6 +253,23 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para de
 Para dúvidas ou suporte, entre em contato:
 - Email: contato@sarahpilates.com
 - GitHub Issues: [Link para issues]
+
+## 🔄 Migrações e Manutenção
+
+### Backup do Banco
+```bash
+mysqldump -u sarah_user -p sarah_pilates > backup.sql
+```
+
+### Restaurar Backup
+```bash
+mysql -u sarah_user -p sarah_pilates < backup.sql
+```
+
+### Verificar Status do Banco
+```bash
+npm run db:studio
+```
 
 ---
 

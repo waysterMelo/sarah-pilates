@@ -6,12 +6,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   email     String   @unique
   password  String
   name      String
@@ -27,16 +27,16 @@ model User {
 }
 
 model Student {
-  id                String   @id @default(uuid())
+  id                String   @id @default(cuid())
   name              String
   email             String   @unique
   phone             String
   birthDate         DateTime
-  address           String?
+  address           String?  @db.Text
   emergencyContact  String
   emergencyPhone    String
-  medicalHistory    String?
-  objectives        String?
+  medicalHistory    String?  @db.Text
+  objectives        String?  @db.Text
   plan              String   @default("Mensal - 8 aulas")
   status            StudentStatus @default(ACTIVE)
   registrationDate  DateTime @default(now())
@@ -54,11 +54,11 @@ model Student {
 }
 
 model Instructor {
-  id              String   @id @default(uuid())
+  id              String   @id @default(cuid())
   userId          String   @unique
-  specialties     String[]
+  specialties     Json
   crefito         String?
-  biography       String?
+  biography       String?  @db.Text
   photo           String?
   startDate       DateTime @default(now())
   status          InstructorStatus @default(ACTIVE)
@@ -75,7 +75,7 @@ model Instructor {
 }
 
 model Schedule {
-  id             String   @id @default(uuid())
+  id             String   @id @default(cuid())
   studentId      String
   instructorId   String
   date           DateTime
@@ -83,10 +83,10 @@ model Schedule {
   endTime        String
   type           String   @default("Pilates Solo")
   status         ScheduleStatus @default(SCHEDULED)
-  notes          String?
+  notes          String?  @db.Text
   room           String   @default("Sala 1")
-  equipment      String[]
-  price          Float    @default(80.0)
+  equipment      Json
+  price          Decimal  @default(80.0) @db.Decimal(10, 2)
   paymentStatus  PaymentStatus @default(PENDING)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -99,13 +99,13 @@ model Schedule {
 }
 
 model Evaluation {
-  id                    String   @id @default(uuid())
+  id                    String   @id @default(cuid())
   studentId             String
   instructorId          String
   date                  DateTime @default(now())
   type                  EvaluationType @default(INITIAL)
-  weight                Float?
-  height                Float?
+  weight                Decimal?  @db.Decimal(5, 2)
+  height                Decimal?  @db.Decimal(5, 2)
   bloodPressure         String?
   heartRate             Int?
   flexibility           Json?
@@ -113,12 +113,12 @@ model Evaluation {
   balance               Json?
   coordination          Json?
   postureAnalysis       Json?
-  medicalObservations   String?
-  objectives            String?
-  treatmentPlan         String?
-  recommendations       String?
+  medicalObservations   String?  @db.Text
+  objectives            String?  @db.Text
+  treatmentPlan         String?  @db.Text
+  recommendations       String?  @db.Text
   nextEvaluationDate    DateTime?
-  attachments           String[]
+  attachments           Json
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
@@ -130,25 +130,25 @@ model Evaluation {
 }
 
 model EvolutionRecord {
-  id                 String   @id @default(uuid())
+  id                 String   @id @default(cuid())
   studentId          String
   instructorId       String
   date               DateTime @default(now())
   session            Int
   focus              String
-  exercisesPerformed String[]
-  progressNotes      String?
-  difficultiesObserved String?
-  improvements       String?
-  nextSessionGoals   String?
+  exercisesPerformed Json
+  progressNotes      String?  @db.Text
+  difficultiesObserved String? @db.Text
+  improvements       String?  @db.Text
+  nextSessionGoals   String?  @db.Text
   overallRating      Int      @default(3)
   painLevel          Int      @default(0)
   mobilityLevel      Int      @default(3)
   strengthLevel      Int      @default(3)
   balanceLevel       Int      @default(3)
   enduranceLevel     Int      @default(3)
-  observations       String?
-  equipment          String[]
+  observations       String?  @db.Text
+  equipment          Json
   duration           Int      @default(60)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
