@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-export const createScheduleSchema = z.object({
-  studentId: z.string().uuid('ID do aluno inválido'),
-  instructorId: z.string().uuid('ID do instrutor inválido'),
+const baseScheduleSchema = z.object({
+  studentId: z.string().min(1, 'ID do aluno inválido'),
+  instructorId: z.string().min(1, 'ID do instrutor inválido'),
   date: z.string().refine((date) => !isNaN(Date.parse(date)), 'Data inválida'),
   startTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Horário de início inválido'),
   endTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Horário de fim inválido'),
@@ -24,15 +24,17 @@ export const createScheduleSchema = z.object({
   path: ['endTime'],
 });
 
-export const updateScheduleSchema = createScheduleSchema.partial();
+export const createScheduleSchema = baseScheduleSchema;
+
+export const updateScheduleSchema = baseScheduleSchema.partial();
 
 export const getSchedulesQuerySchema = z.object({
   page: z.string().optional().transform((val) => val ? parseInt(val) : 1),
   limit: z.string().optional().transform((val) => val ? parseInt(val) : 10),
   search: z.string().optional(),
   status: z.string().optional(),
-  studentId: z.string().uuid().optional(),
-  instructorId: z.string().uuid().optional(),
+  studentId: z.string().optional(),
+  instructorId: z.string().optional(),
   date: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),

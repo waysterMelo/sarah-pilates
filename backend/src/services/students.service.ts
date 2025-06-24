@@ -10,9 +10,9 @@ export class StudentsService {
 
     if (search) {
       where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
-        { phone: { contains: search, mode: 'insensitive' } },
+        { name: { contains: search } },
+        { email: { contains: search } },
+        { phone: { contains: search } },
       ];
     }
 
@@ -170,9 +170,9 @@ export class StudentsService {
     return prisma.student.findMany({
       where: {
         OR: [
-          { name: { contains: query, mode: 'insensitive' } },
-          { email: { contains: query, mode: 'insensitive' } },
-          { phone: { contains: query, mode: 'insensitive' } },
+          { name: { contains: query } },
+          { email: { contains: query } },
+          { phone: { contains: query } },
         ]
       },
       take: 10,

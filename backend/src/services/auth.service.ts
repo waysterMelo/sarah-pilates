@@ -147,11 +147,11 @@ export class AuthService {
       return;
     }
 
-    const resetToken = generateAccessToken(
-      { userId: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET!,
-      '1h'
-    );
+    const resetToken = generateAccessToken({
+      userId: user.id,
+      email: user.email,
+      role: user.role
+    });
 
     const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
     
@@ -176,7 +176,6 @@ export class AuthService {
   static async getProfile(userId: string) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: { instructor: true },
       select: {
         id: true,
         name: true,
@@ -221,7 +220,6 @@ export class AuthService {
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: updateData,
-      include: { instructor: true },
       select: {
         id: true,
         name: true,
