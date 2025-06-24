@@ -9,6 +9,8 @@ import ScheduleManagement from './components/ScheduleManagement';
 import ScheduleCapacity from './components/ScheduleCapacity';
 import EvaluationManagement from './components/EvaluationManagement';
 import EvolutionRecords from './components/EvolutionRecords';
+import ReportsAnalytics from './components/ReportsAnalytics';
+import PhysicalEvaluation from './components/PhysicalEvaluation';
 
 // Componente para proteger rotas
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -95,6 +97,22 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <EvolutionRecords />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/reports"
+        element={
+          <ProtectedRoute>
+            <ReportsAnalytics />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/physical-evaluation"
+        element={
+          <ProtectedRoute>
+            <PhysicalEvaluation />
           </ProtectedRoute>
         }
       />

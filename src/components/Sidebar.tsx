@@ -9,7 +9,9 @@ import {
   Settings,
   LogOut,
   GraduationCap,
-  ClipboardList
+  ClipboardList,
+  BarChart3,
+  Activity
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -23,6 +25,8 @@ const Sidebar = () => {
     { icon: Calendar, label: 'Agenda', path: '/schedule' },
     { icon: ClipboardList, label: 'Avaliações', path: '/evaluations' },
     { icon: FileText, label: 'Evolução', path: '/records' },
+    { icon: BarChart3, label: 'Relatórios', path: '/reports' },
+    { icon: Activity, label: 'Avaliação Física', path: '/physical-evaluation' },
     { icon: Settings, label: 'Configurações', path: '/settings' },
   ];
 
