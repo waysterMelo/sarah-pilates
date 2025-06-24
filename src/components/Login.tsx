@@ -5,23 +5,27 @@ import { Flower, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login, isLoading } = useAuth();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
+    password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     setError('');
 
     try {
       await login(formData.email, formData.password);
       navigate('/dashboard');
-    } catch (error: any) {
-      setError(error.message || 'Erro ao fazer login');
+    } catch (err: any) {
+      setError(err.message || 'Erro ao fazer login');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -35,7 +39,7 @@ const Login = () => {
       <div className="w-full max-w-md">
         {/* Logo e Header */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-primary-gradient rounded-3xl flex items-center justify-center text-white text-2xl mx-auto mb-4 shadow-3d">
+          <div className="w-20 h-20 bg-primary-gradient rounded-3xl flex items-center justify-center text-white text-2xl mx-auto mb-6 shadow-3d">
             <Flower className="w-10 h-10" />
           </div>
           <h1 className="text-3xl font-bold bg-primary-gradient bg-clip-text text-transparent mb-2">
@@ -44,21 +48,16 @@ const Login = () => {
           <p className="text-gray-600">Sistema de Gestão Premium</p>
         </div>
 
-        {/* Formulário de Login */}
-        <div className="bg-white rounded-3xl shadow-3d p-8 backdrop-blur-sm">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Bem-vindo de volta</h2>
-            <p className="text-gray-600">Entre com suas credenciais para acessar o sistema</p>
-          </div>
-
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-              <p className="text-red-700 text-sm">{error}</p>
-            </div>
-          )}
-
+        {/* Form */}
+        <div className="bg-white rounded-3xl shadow-3d p-8 backdrop-blur-sm border border-white/20">
           <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                <p className="text-red-700 text-sm">{error}</p>
+              </div>
+            )}
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email
@@ -105,15 +104,22 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-primary-gradient text-white py-4 rounded-xl font-semibold transition-all duration-500 hover:shadow-neon hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full bg-primary-gradient text-white py-4 rounded-xl font-semibold transition-all duration-500 hover:shadow-neon hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-base"
             >
-              {isLoading ? 'Entrando...' : 'Entrar'}
+              {isLoading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Entrando...
+                </div>
+              ) : (
+                'Entrar'
+              )}
             </button>
           </form>
 
           {/* Credenciais de Teste */}
-          <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-            <h3 className="font-semibold text-blue-800 mb-2">Credenciais de Teste:</h3>
+          <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+            <h3 className="text-sm font-semibold text-blue-800 mb-2">Credenciais de Teste:</h3>
             <div className="text-sm text-blue-700 space-y-1">
               <p><strong>Admin:</strong> admin@sarahpilates.com / admin123</p>
               <p><strong>Instrutor:</strong> sarah@sarahpilates.com / instructor123</p>
@@ -123,7 +129,7 @@ const Login = () => {
 
         {/* Footer */}
         <div className="text-center mt-8 text-gray-500 text-sm">
-          <p>© 2024 Sarah Pilates. Todos os direitos reservados.</p>
+          <p>© 2024 Sarah Pilates Studio. Todos os direitos reservados.</p>
         </div>
       </div>
     </div>
