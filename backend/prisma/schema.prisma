@@ -1,0 +1,200 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(INSTRUCTOR)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamento com instructor
+  instructor Instructor?
+  
+  @@map("users")
+}
+
+model Student {
+  id                String   @id @default(uuid())
+  name              String
+  email             String   @unique
+  phone             String
+  birthDate         DateTime
+  address           String?
+  emergencyContact  String
+  emergencyPhone    String
+  medicalHistory    String?
+  objectives        String?
+  plan              String   @default("Mensal - 8 aulas")
+  status            StudentStatus @default(ACTIVE)
+  registrationDate  DateTime @default(now())
+  lastClass         DateTime?
+  totalClasses      Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relacionamentos
+  schedules         Schedule[]
+  evaluations       Evaluation[]
+  evolutionRecords  EvolutionRecord[]
+
+  @@map("students")
+}
+
+model Instructor {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  specialties     String[]
+  crefito         String?
+  biography       String?
+  photo           String?
+  startDate       DateTime @default(now())
+  status          InstructorStatus @default(ACTIVE)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relacionamentos
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schedules       Schedule[]
+  evaluations     Evaluation[]
+  evolutionRecords EvolutionRecord[]
+
+  @@map("instructors")
+}
+
+model Schedule {
+  id             String   @id @default(uuid())
+  studentId      String
+  instructorId   String
+  date           DateTime
+  startTime      String
+  endTime        String
+  type           String   @default("Pilates Solo")
+  status         ScheduleStatus @default(SCHEDULED)
+  notes          String?
+  room           String   @default("Sala 1")
+  equipment      String[]
+  price          Float    @default(80.0)
+  paymentStatus  PaymentStatus @default(PENDING)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relacionamentos
+  student        Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  instructor     Instructor  @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+
+  @@map("schedules")
+}
+
+model Evaluation {
+  id                    String   @id @default(uuid())
+  studentId             String
+  instructorId          String
+  date                  DateTime @default(now())
+  type                  EvaluationType @default(INITIAL)
+  weight                Float?
+  height                Float?
+  bloodPressure         String?
+  heartRate             Int?
+  flexibility           Json?
+  strength              Json?
+  balance               Json?
+  coordination          Json?
+  postureAnalysis       Json?
+  medicalObservations   String?
+  objectives            String?
+  treatmentPlan         String?
+  recommendations       String?
+  nextEvaluationDate    DateTime?
+  attachments           String[]
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relacionamentos
+  student               Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  instructor            Instructor  @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+
+  @@map("evaluations")
+}
+
+model EvolutionRecord {
+  id                 String   @id @default(uuid())
+  studentId          String
+  instructorId       String
+  date               DateTime @default(now())
+  session            Int
+  focus              String
+  exercisesPerformed String[]
+  progressNotes      String?
+  difficultiesObserved String?
+  improvements       String?
+  nextSessionGoals   String?
+  overallRating      Int      @default(3)
+  painLevel          Int      @default(0)
+  mobilityLevel      Int      @default(3)
+  strengthLevel      Int      @default(3)
+  balanceLevel       Int      @default(3)
+  enduranceLevel     Int      @default(3)
+  observations       String?
+  equipment          String[]
+  duration           Int      @default(60)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Relacionamentos
+  student            Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  instructor         Instructor  @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+
+  @@map("evolution_records")
+}
+
+enum Role {
+  ADMIN
+  INSTRUCTOR
+  RECEPTIONIST
+}
+
+enum StudentStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum InstructorStatus {
+  ACTIVE
+  INACTIVE
+  VACATION
+}
+
+enum ScheduleStatus {
+  SCHEDULED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  EXEMPT
+}
+
+enum EvaluationType {
+  INITIAL
+  PROGRESS
+  FINAL
+  MEDICAL
+}
