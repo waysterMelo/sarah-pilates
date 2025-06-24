@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarah Pilates - Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Define variáveis CSS baseadas no estilo do dashboard */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6C5CE7 0%, #FF7675 100%);
+            --secondary-gradient: linear-gradient(135deg, #00B4D8 0%, #80FFDB 100%);
+            --dark-bg: #2D2D3A;
+            --card-bg: #FFFFFF;
+            --accent: #FF7675;
+            --text-dark: #2D2D3A;
+            --text-light: #FFFFFF;
+            --neon-effect: 0 0 15px rgba(255, 118, 117, 0.5);
+            --glass-effect: rgba(255, 255, 255, 0.95);
+            --shadow-3d: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --border-radius: 20px;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Reset de estilos padrão */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Estilo do body - usando gradiente animado */
+        body {
+            color: var(--text-light); /* Cor de texto padrão para a página */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px; /* Adiciona padding para telas menores */
+            /* Gradiente de fundo animado */
+            background: linear-gradient(135deg, #6C5CE7, #FF7675, #6C5CE7); /* Gradiente inicial */
+            background-size: 200% 200%; /* Tamanho maior para permitir animação */
+            animation: gradientAnimation 15s ease infinite; /* Aplica a animação */
+        }
+
+        /* Keyframes para a animação do gradiente */
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Estilo do container de login */
+        .login-container {
+            background: var(--glass-effect); /* Usa o efeito de vidro para o card */
+            color: var(--text-dark); /* Cor do texto dentro do card */
+            padding: 50px 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-3d);
+            width: 100%;
+            max-width: 450px; /* Limita a largura máxima */
+            text-align: center;
+            transition: var(--transition);
+            position: relative; /* Necessário para sobrepor a animação se necessário */
+            z-index: 1; /* Garante que o card fique sobre o fundo */
+        }
+
+        .login-container:hover {
+             transform: scale(1.02); /* Leve efeito de escala ao passar o mouse */
+        }
+
+        /* Estilo do logo - similar ao dashboard */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Centraliza os elementos do logo */
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 15px;
+            flex-shrink: 0; /* Impede que o logo encolha */
+        }
+
+        .logo-container h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+             /* Usa gradiente para o texto */
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Estilo do grupo de formulário */
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa; /* Cor do ícone */
+            transition: color 0.3s ease;
+        }
+
+        /* Muda a cor do ícone quando o input está em foco */
+        .form-control:focus + i {
+             color: var(--accent);
+        }
+
+        /* Estilo do campo de input */
+        .form-control {
+            width: 100%;
+            padding: 15px 15px 15px 45px; /* Adiciona padding para o ícone */
+            border: 1px solid #ddd;
+            border-radius: 12px; /* Um pouco menos arredondado que o card */
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #f8f9ff; /* Fundo claro para inputs */
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #6C5CE7; /* Usa cor primária para a borda em foco */
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2); /* Sombra sutil de foco */
+        }
+
+        /* Estilo do botão de login */
+        .login-btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center; /* Centraliza o texto do botão */
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            width: 100%; /* Faz o botão ocupar a largura total */
+            margin-top: 10px; /* Adiciona espaço acima do botão */
+        }
+
+        .login-btn i {
+            font-size: 1.2rem;
+        }
+
+        .login-btn:hover {
+            box-shadow: var(--neon-effect);
+            transform: translateY(-3px);
+        }
+
+        /* Estilo do link */
+        .forgot-password {
+            display: block; /* Torna um elemento de bloco */
+            margin-top: 20px;
+            color: #6C5CE7; /* Usa cor primária para o link */
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: var(--accent); /* Usa cor de destaque ao passar o mouse */
+            text-decoration: underline;
+        }
+
+        /* Ajustes responsivos */
+        @media (max-width: 500px) {
+            .login-container {
+                padding: 40px 25px;
+            }
+            .logo-container h2 {
+                font-size: 1.5rem;
+            }
+            .form-control {
+                padding: 12px 12px 12px 40px;
+            }
+            .login-btn {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo-container">
+            <div class="logo"><i class="fas fa-spa"></i></div>
+            <h2>Sarah Pilates</h2>
+        </div>
+
+        <form action="#" method="post"> <div class="form-group">
+                <input type="email" id="email" name="email" class="form-control" placeholder="Seu e-mail" required>
+                <i class="fas fa-envelope"></i>
+            </div>
+
+            <div class="form-group">
+                <input type="password" id="password" name="password" class="form-control" placeholder="Sua senha" required>
+                <i class="fas fa-lock"></i>
+            </div>
+
+            <button type="submit" class="login-btn">
+                <i class="fas fa-sign-in-alt"></i>
+                Entrar
+            </button>
+
+            <a href="#" class="forgot-password">Esqueceu sua senha?</a>
+        </form>
+    </div>
+
+    </body>
+</html>

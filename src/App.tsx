@@ -26,7 +26,7 @@ function App() {
           <Route path="/records" element={<EvolutionRecords />} />
           <Route path="/reports" element={<ReportsAnalytics />} />
           <Route path="/physical-evaluation" element={<PhysicalEvaluation />} />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>
     </Router>
