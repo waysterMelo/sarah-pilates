@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: sarah-pilates-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sarah_pilates
+      MYSQL_USER: sarah
+      MYSQL_PASSWORD: pilates123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/src/main/resources/db/migration:/docker-entrypoint-initdb.d
+    networks:
+      - sarah-pilates-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sarah-pilates-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/sarah_pilates?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - sarah-pilates-network
+    volumes:
+      - ./backend:/app
+    command: ["./mvnw", "spring-boot:run"]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sarah-pilates-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - sarah-pilates-network
+    environment:
+      - VITE_API_URL=http://localhost:8080/api
+
+volumes:
+  mysql_data:
+
+networks:
+  sarah-pilates-network:
+    driver: bridge
