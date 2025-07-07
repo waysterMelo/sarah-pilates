@@ -1,131 +1,228 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Calendar, 
-  Clock, 
-  Users, 
+  ArrowLeft, 
   Plus, 
-  ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
-  User,
-  AlertCircle,
-  CheckCircle,
-  XCircle
+  Edit, 
+  Trash2,
+  Clock,
+  Users,
+  Calendar,
+  MapPin,
+  Save,
+  X,
+  AlertCircle
 } from 'lucide-react';
 
 interface TimeSlot {
-  id: string;
+  id: number;
   time: string;
   maxCapacity: number;
   currentBookings: number;
-  bookings: {
-    id: number;
-    studentName: string;
-    instructorName: string;
-    type: string;
-    status: 'Confirmado' | 'Agendado' | 'Cancelado';
-  }[];
+  room: string;
+  instructor: string;
+  type: string;
 }
 
 interface DaySchedule {
+  day: string;
   date: string;
-  timeSlots: TimeSlot[];
+  slots: TimeSlot[];
 }
 
 const ScheduleCapacity = () => {
   const navigate = useNavigate();
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [viewMode, setViewMode] = useState<'day' | 'week'>('day');
-
-  // Horário de funcionamento: 6h às 21h com intervalos de 1h
-  // Intervalo de 15 minutos entre sessões para higienização
-  const generateTimeSlots = (): TimeSlot[] => {
-    const slots: TimeSlot[] = [];
-    const startHour = 6;
-    const endHour = 21;
-    
-    for (let hour = startHour; hour < endHour; hour++) {
-      const timeString = `${hour.toString().padStart(2, '0')}:00`;
-      const endTimeString = `${(hour + 1).toString().padStart(2, '0')}:00`;
-      
-      slots.push({
-        id: `slot-${hour}`,
-        time: `${timeString} - ${endTimeString}`,
-        maxCapacity: 8,
-        currentBookings: Math.floor(Math.random() * 9), // Simulação de dados
-        bookings: generateMockBookings(Math.floor(Math.random() * 9))
-      });
+  const [weekSchedule, setWeekSchedule] = useState<DaySchedule[]>([
+    {
+      day: 'Segunda-feira',
+      date: '2024-12-16',
+      slots: [
+        { id: 1, time: '07:00', maxCapacity: 12, currentBookings: 8, room: 'Sala 1', instructor: 'Sarah Costa Silva', type: 'Pilates Solo' },
+        { id: 2, time: '08:00', maxCapacity: 6, currentBookings: 4, room: 'Sala 2', instructor: 'Carla Mendes Santos', type: 'Pilates Aparelhos' },
+        { id: 3, time: '09:00', maxCapacity: 10, currentBookings: 7, room: 'Sala 1', instructor: 'Sarah Costa Silva', type: 'Pilates Solo' },
+        { id: 4, time: '10:00', maxCapacity: 8, currentBookings: 6, room: 'Sala 3', instructor: 'Roberto Lima Oliveira', type: 'Pilates Terapêutico' },
+        { id: 5, time: '18:00', maxCapacity: 15, currentBookings: 12, room: 'Sala 1', instructor: 'Sarah Costa Silva', type: 'Pilates Solo' },
+        { id: 6, time: '19:00', maxCapacity: 8, currentBookings: 5, room: 'Sala 2', instructor: 'Carla Mendes Santos', type: 'Pilates Aparelhos' }
+      ]
+    },
+    {
+      day: 'Terça-feira',
+      date: '2024-12-17',
+      slots: [
+        { id: 7, time: '07:00', maxCapacity: 10, currentBookings: 6, room: 'Sala 1', instructor: 'Carla Mendes Santos', type: 'Pilates Solo' },
+        { id: 8, time: '08:00', maxCapacity: 6, currentBookings: 3, room: 'Sala 2', instructor: 'Roberto Lima Oliveira', type: 'Pilates Aparelhos' },
+        { id: 9, time: '09:00', maxCapacity: 12, currentBookings: 9, room: 'Sala 1', instructor: 'Sarah Costa Silva', type: 'Pilates Solo' },
+        { id: 10, time: '18:00', maxCapacity: 8, currentBookings: 4, room: 'Sala 3', instructor: 'Roberto Lima Oliveira', type: 'Pilates Terapêutico' },
+        { id: 11, time: '19:00', maxCapacity: 14, currentBookings: 11, room: 'Sala 1', instructor: 'Sarah Costa Silva', type: 'Pilates Solo' }
+      ]
+    },
+    {
+      day: 'Quarta-feira',
+      date: '2024-12-18',
+      slots: [
+        { id: 12, time: '07:00', maxCapacity: 10, currentBookings: 7, room: 'Sala 1', instructor: 'Sarah Costa Silva', type: 'Pilates Solo' },
+        { id: 13, time: '08:00', maxCapacity: 6, currentBookings: 5, room: 'Sala 2', instructor: 'Carla Mendes Santos', type: 'Pilates Aparelhos' },
+        { id: 14, time: '09:00', maxCapacity: 8, currentBookings: 3, room: 'Sala 3', instructor: 'Roberto Lima Oliveira', type: 'Pilates Terapêutico' },
+        { id: 15, time: '18:00', maxCapacity: 12, currentBookings: 8, room: 'Sala 1', instructor: 'Sarah Costa Silva', type: 'Pilates Solo' },
+        { id: 16, time: '19:00', maxCapacity: 6, currentBookings: 4, room: 'Sala 2', instructor: 'Carla Mendes Santos', type: 'Pilates Aparelhos' }
+      ]
+    },
+    {
+      day: 'Quinta-feira',
+      date: '2024-12-19',
+      slots: [
+        { id: 17, time: '07:00', maxCapacity: 8, currentBookings: 5, room: 'Sala 1', instructor: 'Carla Mendes Santos', type: 'Pilates Solo' },
+        { id: 18, time: '08:00', maxCapacity: 6, currentBookings: 2, room: 'Sala 2', instructor: 'Roberto Lima Oliveira', type: 'Pilates Aparelhos' },
+        { id: 19, time: '09:00', maxCapacity: 10, currentBookings: 8, room: 'Sala 1', instructor: 'Sarah Costa Silva', type: 'Pilates Solo' },
+        { id: 20, time: '18:00', maxCapacity: 8, currentBookings: 6, room: 'Sala 3', instructor: 'Roberto Lima Oliveira', type: 'Pilates Terapêutico' },
+        { id: 21, time: '19:00', maxCapacity: 12, currentBookings: 9, room: 'Sala 1', instructor: 'Sarah Costa Silva', type: 'Pilates Solo' }
+      ]
+    },
+    {
+      day: 'Sexta-feira',
+      date: '2024-12-20',
+      slots: [
+        { id: 22, time: '07:00', maxCapacity: 10, currentBookings: 6, room: 'Sala 1', instructor: 'Sarah Costa Silva', type: 'Pilates Solo' },
+        { id: 23, time: '08:00', maxCapacity: 6, currentBookings: 4, room: 'Sala 2', instructor: 'Carla Mendes Santos', type: 'Pilates Aparelhos' },
+        { id: 24, time: '09:00', maxCapacity: 8, currentBookings: 5, room: 'Sala 3', instructor: 'Roberto Lima Oliveira', type: 'Pilates Terapêutico' },
+        { id: 25, time: '18:00', maxCapacity: 15, currentBookings: 10, room: 'Sala 1', instructor: 'Sarah Costa Silva', type: 'Pilates Solo' },
+        { id: 26, time: '19:00', maxCapacity: 8, currentBookings: 6, room: 'Sala 2', instructor: 'Carla Mendes Santos', type: 'Pilates Aparelhos' }
+      ]
+    },
+    {
+      day: 'Sábado',
+      date: '2024-12-21',
+      slots: [
+        { id: 27, time: '08:00', maxCapacity: 12, currentBookings: 8, room: 'Sala 1', instructor: 'Sarah Costa Silva', type: 'Pilates Solo' },
+        { id: 28, time: '09:00', maxCapacity: 6, currentBookings: 3, room: 'Sala 2', instructor: 'Carla Mendes Santos', type: 'Pilates Aparelhos' },
+        { id: 29, time: '10:00', maxCapacity: 10, currentBookings: 7, room: 'Sala 1', instructor: 'Sarah Costa Silva', type: 'Pilates Solo' }
+      ]
     }
-    
-    return slots;
-  };
+  ]);
 
-  const generateMockBookings = (count: number) => {
-    const mockStudents = [
-      'Ana Silva Santos', 'Maria Santos Oliveira', 'João Pedro Costa',
-      'Carla Mendes', 'Roberto Lima', 'Patricia Fernandes',
-      'Lucas Oliveira', 'Fernanda Costa', 'Ricardo Santos'
-    ];
-    
-    const mockInstructors = ['Sarah Costa Silva', 'Carla Mendes Santos', 'Roberto Lima Oliveira'];
-    const mockTypes = ['Pilates Solo', 'Pilates Aparelhos', 'Pilates Terapêutico'];
-    const mockStatuses: ('Confirmado' | 'Agendado' | 'Cancelado')[] = ['Confirmado', 'Agendado', 'Cancelado'];
-    
-    return Array.from({ length: count }, (_, index) => ({
-      id: index + 1,
-      studentName: mockStudents[Math.floor(Math.random() * mockStudents.length)],
-      instructorName: mockInstructors[Math.floor(Math.random() * mockInstructors.length)],
-      type: mockTypes[Math.floor(Math.random() * mockTypes.length)],
-      status: mockStatuses[Math.floor(Math.random() * mockStatuses.length)]
-    }));
-  };
-
-  const [daySchedule] = useState<DaySchedule>({
-    date: selectedDate,
-    timeSlots: generateTimeSlots()
+  const [editingSlot, setEditingSlot] = useState<{ dayIndex: number; slotIndex: number } | null>(null);
+  const [editCapacity, setEditCapacity] = useState<number>(0);
+  const [showAddSlot, setShowAddSlot] = useState<{ dayIndex: number } | null>(null);
+  const [newSlot, setNewSlot] = useState({
+    time: '',
+    maxCapacity: 1,
+    room: 'Sala 1',
+    instructor: 'Sarah Costa Silva',
+    type: 'Pilates Solo'
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const instructors = ['Sarah Costa Silva', 'Carla Mendes Santos', 'Roberto Lima Oliveira'];
+  const rooms = ['Sala 1', 'Sala 2', 'Sala 3', 'Sala de Aparelhos', 'Sala Terapêutica'];
+  const classTypes = ['Pilates Solo', 'Pilates Aparelhos', 'Pilates Terapêutico', 'Pilates para Idosos'];
+
+  const handleEditCapacity = (dayIndex: number, slotIndex: number) => {
+    setEditingSlot({ dayIndex, slotIndex });
+    setEditCapacity(weekSchedule[dayIndex].slots[slotIndex].maxCapacity);
+  };
+
+  const handleSaveCapacity = () => {
+    if (editingSlot && editCapacity > 0) {
+      const newSchedule = [...weekSchedule];
+      newSchedule[editingSlot.dayIndex].slots[editingSlot.slotIndex].maxCapacity = editCapacity;
+      setWeekSchedule(newSchedule);
+      setEditingSlot(null);
+      setEditCapacity(0);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingSlot(null);
+    setEditCapacity(0);
+  };
+
+  const handleDeleteSlot = (dayIndex: number, slotIndex: number) => {
+    if (window.confirm('Tem certeza que deseja excluir este horário?')) {
+      const newSchedule = [...weekSchedule];
+      newSchedule[dayIndex].slots.splice(slotIndex, 1);
+      setWeekSchedule(newSchedule);
+    }
+  };
+
+  const validateNewSlot = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!newSlot.time) {
+      newErrors.time = 'Horário é obrigatório';
+    }
+
+    if (newSlot.maxCapacity < 1) {
+      newErrors.maxCapacity = 'Capacidade deve ser maior que zero';
+    }
+
+    if (newSlot.maxCapacity > 100) {
+      newErrors.maxCapacity = 'Capacidade não pode ser maior que 100';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleAddSlot = () => {
+    if (showAddSlot && validateNewSlot()) {
+      const newSchedule = [...weekSchedule];
+      const newSlotData: TimeSlot = {
+        id: Math.max(...weekSchedule.flatMap(day => day.slots.map(slot => slot.id))) + 1,
+        time: newSlot.time,
+        maxCapacity: newSlot.maxCapacity,
+        currentBookings: 0,
+        room: newSlot.room,
+        instructor: newSlot.instructor,
+        type: newSlot.type
+      };
+      
+      newSchedule[showAddSlot.dayIndex].slots.push(newSlotData);
+      newSchedule[showAddSlot.dayIndex].slots.sort((a, b) => a.time.localeCompare(b.time));
+      setWeekSchedule(newSchedule);
+      setShowAddSlot(null);
+      setNewSlot({
+        time: '',
+        maxCapacity: 1,
+        room: 'Sala 1',
+        instructor: 'Sarah Costa Silva',
+        type: 'Pilates Solo'
+      });
+      setErrors({});
+    }
+  };
 
   const getCapacityColor = (current: number, max: number) => {
     const percentage = (current / max) * 100;
-    if (percentage === 100) return 'bg-red-500';
-    if (percentage >= 75) return 'bg-orange-500';
+    if (percentage >= 90) return 'text-red-600 bg-red-100';
+    if (percentage >= 70) return 'text-orange-600 bg-orange-100';
+    if (percentage >= 50) return 'text-yellow-600 bg-yellow-100';
+    return 'text-green-600 bg-green-100';
+  };
+
+  const getProgressBarColor = (current: number, max: number) => {
+    const percentage = (current / max) * 100;
+    if (percentage >= 90) return 'bg-red-500';
+    if (percentage >= 70) return 'bg-orange-500';
     if (percentage >= 50) return 'bg-yellow-500';
     return 'bg-green-500';
   };
 
-  const getCapacityStatus = (current: number, max: number) => {
-    if (current >= max) return { text: 'Lotado', color: 'text-red-600 bg-red-100', icon: XCircle };
-    if (current >= max * 0.75) return { text: 'Quase Lotado', color: 'text-orange-600 bg-orange-100', icon: AlertCircle };
-    return { text: 'Disponível', color: 'text-green-600 bg-green-100', icon: CheckCircle };
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const changeDate = (direction: 'prev' | 'next') => {
-    const currentDate = new Date(selectedDate);
-    const newDate = new Date(currentDate);
-    newDate.setDate(currentDate.getDate() + (direction === 'next' ? 1 : -1));
-    setSelectedDate(newDate.toISOString().split('T')[0]);
+  const getTotalCapacity = () => {
+    return weekSchedule.reduce((total, day) => 
+      total + day.slots.reduce((dayTotal, slot) => dayTotal + slot.maxCapacity, 0), 0
+    );
   };
 
   const getTotalBookings = () => {
-    return daySchedule.timeSlots.reduce((total, slot) => total + slot.currentBookings, 0);
+    return weekSchedule.reduce((total, day) => 
+      total + day.slots.reduce((dayTotal, slot) => dayTotal + slot.currentBookings, 0), 0
+    );
   };
 
-  const getTotalCapacity = () => {
-    return daySchedule.timeSlots.length * 8;
-  };
-
-  const getAvailableSlots = () => {
-    return daySchedule.timeSlots.filter(slot => slot.currentBookings < slot.maxCapacity).length;
+  const getAverageOccupancy = () => {
+    const totalCapacity = getTotalCapacity();
+    const totalBookings = getTotalBookings();
+    return totalCapacity > 0 ? Math.round((totalBookings / totalCapacity) * 100) : 0;
   };
 
   return (
@@ -134,7 +231,7 @@ const ScheduleCapacity = () => {
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 lg:mb-10">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate('/schedule')}
             className="p-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />
@@ -144,86 +241,22 @@ const ScheduleCapacity = () => {
               Cronograma de Capacidade
               <div className="absolute -bottom-1 lg:-bottom-2 left-0 w-12 lg:w-16 h-0.5 lg:h-1 bg-primary-gradient rounded-full"></div>
             </h1>
-            <p className="text-sm sm:text-base text-gray-600 mt-2">
-              Controle de vagas e capacidade por horário
-            </p>
+            <p className="text-sm sm:text-base text-gray-600 mt-2">Gerencie a capacidade de cada horário</p>
           </div>
         </div>
-        <button 
-          onClick={() => navigate('/schedule')}
-          className="bg-primary-gradient text-white px-4 sm:px-6 py-3 rounded-xl font-medium flex items-center gap-2 transition-all duration-500 hover:shadow-neon hover:-translate-y-1 text-sm sm:text-base"
-        >
-          <Plus className="w-5 h-5" />
-          Novo Agendamento
-        </button>
       </header>
 
-      {/* Controles de Data */}
-      <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-4 sm:p-6 mb-6 lg:mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => changeDate('prev')}
-              className="p-2 sm:p-3 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
-            >
-              <ChevronLeft className="w-5 h-5 text-gray-600" />
-            </button>
-            <div className="text-center">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
-                {formatDate(selectedDate)}
-              </h2>
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="mt-2 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary-500"
-              />
-            </div>
-            <button
-              onClick={() => changeDate('next')}
-              className="p-2 sm:p-3 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
-            >
-              <ChevronRight className="w-5 h-5 text-gray-600" />
-            </button>
-          </div>
-          
-          <div className="flex bg-white rounded-xl shadow-md overflow-hidden">
-            <button
-              onClick={() => setViewMode('day')}
-              className={`px-4 py-2 text-sm font-medium transition-colors min-h-[44px] ${
-                viewMode === 'day' 
-                  ? 'bg-primary-500 text-white' 
-                  : 'text-gray-600 hover:bg-gray-50'
-              }`}
-            >
-              Dia
-            </button>
-            <button
-              onClick={() => setViewMode('week')}
-              className={`px-4 py-2 text-sm font-medium transition-colors min-h-[44px] ${
-                viewMode === 'week' 
-                  ? 'bg-primary-500 text-white' 
-                  : 'text-gray-600 hover:bg-gray-50'
-              }`}
-            >
-              Semana
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Estatísticas do Dia */}
+      {/* Estatísticas Gerais */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 lg:mb-8">
         <div className="bg-white p-4 sm:p-6 rounded-2xl lg:rounded-3xl shadow-3d">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm">Capacidade Total</p>
-              <p className="text-xl sm:text-2xl font-bold text-gray-800">{getTotalCapacity()}</p>
+              <p className="text-xl sm:text-2xl font-bold text-blue-600">{getTotalCapacity()}</p>
             </div>
             <Users className="w-6 sm:w-8 h-6 sm:h-8 text-blue-500" />
           </div>
         </div>
-        
         <div className="bg-white p-4 sm:p-6 rounded-2xl lg:rounded-3xl shadow-3d">
           <div className="flex items-center justify-between">
             <div>
@@ -233,24 +266,22 @@ const ScheduleCapacity = () => {
             <Calendar className="w-6 sm:w-8 h-6 sm:h-8 text-green-500" />
           </div>
         </div>
-        
         <div className="bg-white p-4 sm:p-6 rounded-2xl lg:rounded-3xl shadow-3d">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-600 text-sm">Horários Disponíveis</p>
-              <p className="text-xl sm:text-2xl font-bold text-purple-600">{getAvailableSlots()}</p>
+              <p className="text-gray-600 text-sm">Vagas Disponíveis</p>
+              <p className="text-xl sm:text-2xl font-bold text-purple-600">{getTotalCapacity() - getTotalBookings()}</p>
             </div>
-            <Clock className="w-6 sm:w-8 h-6 sm:h-8 text-purple-500" />
+            <div className="w-6 sm:w-8 h-6 sm:h-8 bg-purple-100 rounded-full flex items-center justify-center">
+              <div className="w-2 sm:w-3 h-2 sm:h-3 bg-purple-500 rounded-full"></div>
+            </div>
           </div>
         </div>
-        
         <div className="bg-white p-4 sm:p-6 rounded-2xl lg:rounded-3xl shadow-3d">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm">Taxa de Ocupação</p>
-              <p className="text-xl sm:text-2xl font-bold text-orange-600">
-                {Math.round((getTotalBookings() / getTotalCapacity()) * 100)}%
-              </p>
+              <p className="text-xl sm:text-2xl font-bold text-orange-600">{getAverageOccupancy()}%</p>
             </div>
             <div className="w-6 sm:w-8 h-6 sm:h-8 bg-orange-100 rounded-full flex items-center justify-center">
               <div className="w-2 sm:w-3 h-2 sm:h-3 bg-orange-500 rounded-full"></div>
@@ -259,158 +290,249 @@ const ScheduleCapacity = () => {
         </div>
       </div>
 
-      {/* Grade de Horários */}
-      <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d overflow-hidden">
-        <div className="p-4 sm:p-6 border-b border-gray-100">
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
-            Cronograma do Dia - Capacidade por Horário
-          </h2>
-          <p className="text-sm text-gray-600 mt-1">
-            Horário de funcionamento: 06:00 às 21:00 | Capacidade máxima: 8 pessoas por horário
-          </p>
-        </div>
-        
-        <div className="p-4 sm:p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-            {daySchedule.timeSlots.map((slot) => {
-              const status = getCapacityStatus(slot.currentBookings, slot.maxCapacity);
-              const StatusIcon = status.icon;
-              
-              return (
-                <div
-                  key={slot.id}
-                  className="border border-gray-200 rounded-xl p-4 sm:p-6 hover:shadow-lg transition-all duration-300"
-                >
-                  {/* Cabeçalho do Horário */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <Clock className="w-5 h-5 text-primary-500" />
-                      <span className="font-semibold text-gray-800 text-sm sm:text-base">
-                        {slot.time}
-                      </span>
-                    </div>
-                    <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${status.color}`}>
-                      <StatusIcon className="w-3 h-3" />
-                      {status.text}
-                    </span>
-                  </div>
+      {/* Cronograma Semanal */}
+      <div className="space-y-6 lg:space-y-8">
+        {weekSchedule.map((day, dayIndex) => (
+          <div key={day.day} className="bg-white rounded-2xl lg:rounded-3xl shadow-3d overflow-hidden">
+            <div className="p-4 sm:p-6 border-b border-gray-100 flex justify-between items-center">
+              <div>
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-800">{day.day}</h2>
+                <p className="text-sm text-gray-600">{new Date(day.date).toLocaleDateString('pt-BR')}</p>
+              </div>
+              <button
+                onClick={() => setShowAddSlot({ dayIndex })}
+                className="bg-primary-gradient text-white px-4 py-2 rounded-xl font-medium flex items-center gap-2 transition-all duration-300 hover:shadow-lg text-sm min-h-[40px]"
+              >
+                <Plus className="w-4 h-4" />
+                Adicionar Horário
+              </button>
+            </div>
 
-                  {/* Indicador de Capacidade */}
-                  <div className="mb-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm text-gray-600">Ocupação</span>
-                      <span className="text-sm font-medium text-gray-800">
-                        {slot.currentBookings}/{slot.maxCapacity}
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full transition-all duration-300 ${getCapacityColor(slot.currentBookings, slot.maxCapacity)}`}
-                        style={{ width: `${(slot.currentBookings / slot.maxCapacity) * 100}%` }}
-                      ></div>
-                    </div>
-                  </div>
-
-                  {/* Vagas Visuais */}
-                  <div className="mb-4">
-                    <p className="text-xs text-gray-500 mb-2">Vagas:</p>
-                    <div className="grid grid-cols-4 gap-1">
-                      {Array.from({ length: slot.maxCapacity }, (_, index) => (
-                        <div
-                          key={index}
-                          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
-                            index < slot.currentBookings
-                              ? 'bg-primary-500 text-white'
-                              : 'bg-gray-200 text-gray-400'
-                          }`}
-                        >
-                          {index < slot.currentBookings ? (
-                            <User className="w-3 h-3" />
-                          ) : (
-                            index + 1
-                          )}
+            <div className="p-4 sm:p-6">
+              {day.slots.length === 0 ? (
+                <div className="text-center py-8">
+                  <Clock className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500">Nenhum horário configurado para este dia</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {day.slots.map((slot, slotIndex) => (
+                    <div key={slot.id} className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-gray-500" />
+                          <span className="font-semibold text-gray-800">{slot.time}</span>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Lista de Agendamentos */}
-                  {slot.bookings.length > 0 && (
-                    <div className="border-t border-gray-100 pt-4">
-                      <p className="text-xs text-gray-500 mb-2">Agendamentos:</p>
-                      <div className="space-y-2 max-h-32 overflow-y-auto">
-                        {slot.bookings.slice(0, 3).map((booking) => (
-                          <div
-                            key={booking.id}
-                            className="flex items-center justify-between text-xs"
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => handleEditCapacity(dayIndex, slotIndex)}
+                            className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors min-h-[32px] min-w-[32px] flex items-center justify-center"
+                            title="Editar capacidade"
                           >
-                            <span className="text-gray-700 truncate">
-                              {booking.studentName}
-                            </span>
-                            <span className={`px-2 py-1 rounded-full text-xs ${
-                              booking.status === 'Confirmado' ? 'bg-green-100 text-green-600' :
-                              booking.status === 'Agendado' ? 'bg-blue-100 text-blue-600' :
-                              'bg-red-100 text-red-600'
-                            }`}>
-                              {booking.status}
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteSlot(dayIndex, slotIndex)}
+                            className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors min-h-[32px] min-w-[32px] flex items-center justify-center"
+                            title="Excluir horário"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 mb-3">
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <MapPin className="w-3 h-3" />
+                          {slot.room}
+                        </div>
+                        <div className="text-sm text-gray-600">{slot.instructor}</div>
+                        <div className="text-sm font-medium text-purple-600">{slot.type}</div>
+                      </div>
+
+                      {editingSlot?.dayIndex === dayIndex && editingSlot?.slotIndex === slotIndex ? (
+                        <div className="space-y-3">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Capacidade Máxima
+                            </label>
+                            <input
+                              type="number"
+                              min="1"
+                              max="100"
+                              value={editCapacity}
+                              onChange={(e) => setEditCapacity(parseInt(e.target.value) || 1)}
+                              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 text-sm"
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={handleSaveCapacity}
+                              className="flex-1 bg-green-500 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-green-600 transition-colors min-h-[36px] flex items-center justify-center gap-1"
+                            >
+                              <Save className="w-3 h-3" />
+                              Salvar
+                            </button>
+                            <button
+                              onClick={handleCancelEdit}
+                              className="flex-1 bg-gray-500 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-600 transition-colors min-h-[36px] flex items-center justify-center gap-1"
+                            >
+                              <X className="w-3 h-3" />
+                              Cancelar
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCapacityColor(slot.currentBookings, slot.maxCapacity)}`}>
+                              {slot.currentBookings}/{slot.maxCapacity} vagas
                             </span>
                           </div>
-                        ))}
-                        {slot.bookings.length > 3 && (
-                          <p className="text-xs text-gray-500 italic">
-                            +{slot.bookings.length - 3} mais...
-                          </p>
-                        )}
-                      </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                              className={`h-2 rounded-full transition-all duration-300 ${getProgressBarColor(slot.currentBookings, slot.maxCapacity)}`}
+                              style={{ width: `${Math.min((slot.currentBookings / slot.maxCapacity) * 100, 100)}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  )}
+                  ))}
+                </div>
+              )}
+            </div>
 
-                  {/* Botão de Ação */}
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    {slot.currentBookings < slot.maxCapacity ? (
-                      <button
-                        onClick={() => navigate('/schedule')}
-                        className="w-full bg-primary-gradient text-white py-2 px-4 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-                      >
-                        Agendar ({slot.maxCapacity - slot.currentBookings} vagas)
-                      </button>
-                    ) : (
-                      <button
-                        disabled
-                        className="w-full bg-gray-200 text-gray-500 py-2 px-4 rounded-lg text-sm font-medium cursor-not-allowed"
-                      >
-                        Horário Lotado
-                      </button>
+            {/* Modal para adicionar novo horário */}
+            {showAddSlot?.dayIndex === dayIndex && (
+              <div className="border-t border-gray-100 p-4 sm:p-6 bg-gray-50">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Adicionar Novo Horário</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Horário *
+                    </label>
+                    <input
+                      type="time"
+                      value={newSlot.time}
+                      onChange={(e) => setNewSlot(prev => ({ ...prev, time: e.target.value }))}
+                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary-500 text-sm ${
+                        errors.time ? 'border-red-500' : 'border-gray-200'
+                      }`}
+                    />
+                    {errors.time && (
+                      <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" />
+                        {errors.time}
+                      </p>
                     )}
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
 
-      {/* Legenda */}
-      <div className="bg-white rounded-2xl lg:rounded-3xl shadow-3d p-4 sm:p-6 mt-6 lg:mt-8">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Legenda</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-            <span className="text-sm text-gray-600">Disponível (0-49%)</span>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Capacidade Máxima *
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={newSlot.maxCapacity}
+                      onChange={(e) => setNewSlot(prev => ({ ...prev, maxCapacity: parseInt(e.target.value) || 1 }))}
+                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary-500 text-sm ${
+                        errors.maxCapacity ? 'border-red-500' : 'border-gray-200'
+                      }`}
+                      placeholder="Ex: 12"
+                    />
+                    {errors.maxCapacity && (
+                      <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" />
+                        {errors.maxCapacity}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Sala
+                    </label>
+                    <select
+                      value={newSlot.room}
+                      onChange={(e) => setNewSlot(prev => ({ ...prev, room: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 text-sm"
+                    >
+                      {rooms.map((room) => (
+                        <option key={room} value={room}>
+                          {room}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Instrutor
+                    </label>
+                    <select
+                      value={newSlot.instructor}
+                      onChange={(e) => setNewSlot(prev => ({ ...prev, instructor: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 text-sm"
+                    >
+                      {instructors.map((instructor) => (
+                        <option key={instructor} value={instructor}>
+                          {instructor}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Tipo de Aula
+                    </label>
+                    <select
+                      value={newSlot.type}
+                      onChange={(e) => setNewSlot(prev => ({ ...prev, type: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 text-sm"
+                    >
+                      {classTypes.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 mt-4">
+                  <button
+                    onClick={handleAddSlot}
+                    className="bg-primary-gradient text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all duration-300 hover:shadow-lg text-sm min-h-[40px]"
+                  >
+                    <Save className="w-4 h-4" />
+                    Salvar Horário
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowAddSlot(null);
+                      setNewSlot({
+                        time: '',
+                        maxCapacity: 1,
+                        room: 'Sala 1',
+                        instructor: 'Sarah Costa Silva',
+                        type: 'Pilates Solo'
+                      });
+                      setErrors({});
+                    }}
+                    className="bg-gray-500 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all duration-300 hover:bg-gray-600 text-sm min-h-[40px]"
+                  >
+                    <X className="w-4 h-4" />
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="flex items-center gap-3">
-            <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
-            <span className="text-sm text-gray-600">Moderado (50-74%)</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-4 h-4 bg-orange-500 rounded-full"></div>
-            <span className="text-sm text-gray-600">Quase Lotado (75-99%)</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-4 h-4 bg-red-500 rounded-full"></div>
-            <span className="text-sm text-gray-600">Lotado (100%)</span>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
